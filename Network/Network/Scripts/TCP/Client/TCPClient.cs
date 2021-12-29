@@ -11,7 +11,6 @@ namespace Network
         private Socket clientSocket = null;
         private string _ip = "10.1.10.103";
         private int _prot = 8000;
-
         private int uid = 10000;
         public TCPClient()
         {

@@ -20,16 +20,19 @@ namespace Network
 
             if (input.CompareTo("1") == 0)
             {
-                TcpClientController tcpClientController = new TcpClientController();
+                TCPClientController tcpClientController = new TCPClientController();
                 tcpClientController.SetIpAndPort(ip, int.Parse(port));
                 tcpClientController.Init();
             }
             else if (input.CompareTo("2") == 0)
             {
-
+                TCPServerController tcpServerController = new TCPServerController();
+                tcpServerController.SetIpAndPort(ip, int.Parse(port));
+                tcpServerController.Init();
             }
 
             Console.ReadLine();
         }
     }
+
 }

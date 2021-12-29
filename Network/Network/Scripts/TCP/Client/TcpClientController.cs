@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Network
 {
-    class TcpClientController : IipPort
+    class TCPClientController : IipPort
     {
         private TCPClient _tcpClient;
-        public TcpClientController()
+        public TCPClientController()
         {
             _tcpClient = new TCPClient();
         }
@@ -21,7 +21,7 @@ namespace Network
         {
             _tcpClient.StartConnect();
 
-            while(true)
+            while (true)
             {
                 Input();
             }
@@ -40,4 +40,5 @@ namespace Network
             _tcpClient.SendMessage(id, msg);
         }
     }
+
 }
