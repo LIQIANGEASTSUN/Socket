@@ -16,7 +16,7 @@ namespace Server
         private Socket serverSocket = null;
         private List<Socket> clientSocketList = new List<Socket>();
 
-        private string ip = "10.1.10.103";
+        private string ip = "10.0.116.245";
         public SocketServer()
         {
             

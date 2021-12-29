@@ -160,7 +160,5 @@ namespace Client
                 Debug.Log(ex.Message);
             }
         }
-
-
     }
 }

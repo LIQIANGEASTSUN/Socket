@@ -10,3 +10,10 @@ D:\TTT\Socket\Server\Server\Server\obj\Debug\Server.pdb
 D:\TTT\Socket\Server\Server\Server\bin\Debug\Server.exe
 D:\TTT\Socket\Server\Server\Server\bin\Debug\Server.pdb
 D:\TTT\Socket\Server\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
+G:\Project\Git\Socket\SocketOLD\Server\Server\Server\obj\Debug\Server.csprojAssemblyReference.cache
+G:\Project\Git\Socket\SocketOLD\Server\Server\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
+G:\Project\Git\Socket\SocketOLD\Server\Server\Server\obj\Debug\Server.exe
+G:\Project\Git\Socket\SocketOLD\Server\Server\Server\obj\Debug\Server.pdb
+G:\Project\Git\Socket\SocketOLD\Server\Server\Server\bin\Debug\Server.exe.config
+G:\Project\Git\Socket\SocketOLD\Server\Server\Server\bin\Debug\Server.exe
+G:\Project\Git\Socket\SocketOLD\Server\Server\Server\bin\Debug\Server.pdb

@@ -136,7 +136,7 @@ public static class Receive
         Array.Copy(bytes, head + head + cmd, byteData, 0, byteData.Length);
         string content = Encoding.ASCII.GetString(byteData);
 
-        Debug.LogError("headLength : " + headLength + "    cmdID : " + cmdID + "   content : " + content);
+        Console.WriteLine("headLength : " + headLength + "    cmdID : " + cmdID + "   content : " + content);
 
         SocketManage.SendMessage(uid, cmdID, content);
     }
