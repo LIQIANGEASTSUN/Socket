@@ -45,13 +45,12 @@ namespace Network
         // 连接服务器成功
         private void ConnectCallBack(IAsyncResult ar)
         {
-            Debug.Log("连接服务器成功");
             try
             {
                 StateObject stateObject = (StateObject)ar.AsyncState;
                 Socket socket = stateObject.socket;
                 socket.EndConnect(ar);
-
+                Debug.Log("连接服务器成功");
             }
             catch (Exception ex)
             {
@@ -112,11 +111,8 @@ namespace Network
             try
             {
                 byte[] uidBytes = BitConverter.GetBytes(uid);
-
                 byte[] cmdBytes = BitConverter.GetBytes(cmdID);
-
                 int length = uidBytes.Length + cmdBytes.Length + bytes.Length;  // uid + cmd + 内容
-
                 byte[] lengthBytes = BitConverter.GetBytes(length);
 
                 ByteBuffer byteBuffer = new ByteBuffer((lengthBytes.Length + length));

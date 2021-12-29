@@ -5,22 +5,18 @@ using System.Text;
 
 namespace Network
 {
-    public class ByteBuffer
+    public struct ByteBuffer
     {
-
         /// <summary>
         /// 字节缓存区
         /// </summary>
         private byte[] byteData;
-
-        public int writeIndex = 0;
-        public int readeIndex = 0;
+        public int writeIndex;
 
         public ByteBuffer(int capacity)
         {
             byteData = new byte[capacity];
             writeIndex = 0;
-            readeIndex = 0;
         }
 
         public void WriteInt(int value)
@@ -65,7 +61,6 @@ namespace Network
         public void Clear()
         {
             writeIndex = 0;
-            readeIndex = 0;
         }
     }
 }
