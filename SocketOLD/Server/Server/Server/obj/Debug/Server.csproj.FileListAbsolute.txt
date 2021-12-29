@@ -1,0 +1,12 @@
+D:\Socket\Server\Server\Server\bin\Debug\Server.exe.config
+D:\Socket\Server\Server\Server\bin\Debug\Server.exe
+D:\Socket\Server\Server\Server\bin\Debug\Server.pdb
+D:\Socket\Server\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
+D:\Socket\Server\Server\Server\obj\Debug\Server.exe
+D:\Socket\Server\Server\Server\obj\Debug\Server.pdb
+D:\TTT\Socket\Server\Server\Server\bin\Debug\Server.exe.config
+D:\TTT\Socket\Server\Server\Server\obj\Debug\Server.exe
+D:\TTT\Socket\Server\Server\Server\obj\Debug\Server.pdb
+D:\TTT\Socket\Server\Server\Server\bin\Debug\Server.exe
+D:\TTT\Socket\Server\Server\Server\bin\Debug\Server.pdb
+D:\TTT\Socket\Server\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache

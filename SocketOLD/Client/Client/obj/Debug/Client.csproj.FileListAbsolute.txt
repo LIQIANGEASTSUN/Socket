@@ -1,0 +1,6 @@
+D:\Socket\Client\Client\Client\bin\Debug\Client.exe.config
+D:\Socket\Client\Client\Client\bin\Debug\Client.exe
+D:\Socket\Client\Client\Client\bin\Debug\Client.pdb
+D:\Socket\Client\Client\Client\obj\Debug\Client.exe
+D:\Socket\Client\Client\Client\obj\Debug\Client.pdb
+D:\Socket\Client\Client\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache
