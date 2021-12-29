@@ -159,8 +159,8 @@ namespace Network
             try
             {
                 clientSocket.Shutdown(SocketShutdown.Both);
-                clientSocket.Dispose();//调用的上一个函数
                 clientSocket.Close();
+                clientSocket.Dispose();//调用的上一个函数
                 clientSocket = null;
             }
             catch (Exception ex)
