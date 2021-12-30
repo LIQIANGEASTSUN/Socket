@@ -48,7 +48,6 @@ namespace Network
                 Console.WriteLine(ex.Message);
             }
 
-            Console.WriteLine("启动监听{0}成功", listener.LocalEndPoint.ToString());
             StartAccept(listener);
         }
 
@@ -65,6 +64,7 @@ namespace Network
                 {
                     allDone.Reset();
                     listener.BeginAccept(new AsyncCallback(AcceptCallBack), listener);
+                    Console.WriteLine("启动监听{0}成功", listener.LocalEndPoint.ToString());
                     allDone.WaitOne();
                 }
             }
@@ -177,8 +177,8 @@ namespace Network
             {
                 Socket handler = (Socket)ar.AsyncState;
                 int bytesSend = handler.EndSend(ar);
-                handler.Shutdown(SocketShutdown.Both);
-                handler.Close();
+                //handler.Shutdown(SocketShutdown.Both);
+                //handler.Close();
             }
             catch (Exception ex)
             {
@@ -190,6 +190,8 @@ namespace Network
         {
             string content = Encoding.ASCII.GetString(byteData);
             Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   content : " + content);
+
+            Send(uid, cmdID, content);
         }
     }
 

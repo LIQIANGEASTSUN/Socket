@@ -45,10 +45,10 @@ namespace Network
                 state.workSocket.BeginConnect(ipEndPoint, ConnectCallBack, state);  // 异步连接
 
                 // 用于暂停主线程的执行，并在可以继续执行时发出信号
-                connectDone.WaitOne();
+                //connectDone.WaitOne();
 
                 Receive(clientSocket);
-                receiveDone.WaitOne();
+                //receiveDone.WaitOne();
             }
             catch (Exception ex)
             {
@@ -68,7 +68,7 @@ namespace Network
 
                 // 当远程设备可用时，它连接到远程设备，然后通过设置ManualResetEvent 向应用程序线程发送连接已完成的信号connectDone
                 // Signal that the connection has been made.
-                connectDone.Set();
+                //connectDone.Set();
             }
             catch (Exception ex)
             {
