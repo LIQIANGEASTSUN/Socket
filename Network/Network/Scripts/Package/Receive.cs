@@ -5,21 +5,27 @@ using System.Text;
 
 namespace Network
 {
-    public static class Receive
+    public class Receive
     {
-        private static ByteBuffer byteBuffer;
+        private ByteBuffer byteBuffer;
 
-        private static int head = 0;
-        private static int cmd = 0;
+        private int head = 0;
+        private int cmd = 0;
 
-        static Receive()
+        private Action<int, int, byte[]> _callBack;
+        public Receive()
         {
             byteBuffer = new ByteBuffer(1024);
             head = 4;
             cmd = 4;
         }
 
-        public static void ReceiveMessage(byte[] bytes)
+        public void SetCompleteCallBack(Action<int, int, byte[]> callBacka)
+        {
+            _callBack = callBacka;
+        }
+
+        public void ReceiveMessage(byte[] bytes)
         {
             // 有之前的缓存数据
             if (byteBuffer.writeIndex > 0)
@@ -31,7 +37,7 @@ namespace Network
             NoCache(bytes);
         }
 
-        private static void HasCache(byte[] bytes)
+        private void HasCache(byte[] bytes)
         {
             if (byteBuffer.writeIndex >= head)  // 可以读取到消息长度
             {
@@ -107,7 +113,7 @@ namespace Network
             }
         }
 
-        private static void NoCache(byte[] bytes)
+        private void NoCache(byte[] bytes)
         {
             byteBuffer.Clear();
 
@@ -127,7 +133,7 @@ namespace Network
             ReceiveMessage(byteData);
         }
 
-        private static void CompleteBuff(byte[] bytes)
+        private void CompleteBuff(byte[] bytes)
         {
             int headLength = BitConverter.ToInt32(bytes, 0);
             int uid = BitConverter.ToInt32(bytes, head);
@@ -135,10 +141,12 @@ namespace Network
 
             byte[] byteData = new byte[bytes.Length - head - head - cmd];
             Array.Copy(bytes, head + head + cmd, byteData, 0, byteData.Length);
-            string content = Encoding.ASCII.GetString(byteData);
 
-            Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   content : " + content);
+            if (null != _callBack)
+            {
+                _callBack(uid, cmdID, byteData);
+            }
         }
-    }
 
+    }
 }

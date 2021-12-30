@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace Network
 {
@@ -11,10 +12,16 @@ namespace Network
         private Socket clientSocket = null;
         private string _ip = "10.1.10.103";
         private int _prot = 8000;
-        private int uid = 10000;
+
+        private ManualResetEvent connectDone = new ManualResetEvent(false);
+        private ManualResetEvent sendDone = new ManualResetEvent(false);
+        private ManualResetEvent receiveDone = new ManualResetEvent(false);
+
+        private Receive _receive;
         public TCPClient()
         {
-
+            _receive = new Receive();
+            _receive.SetCompleteCallBack(ReceiveComplete);
         }
 
         public void SetIpAndPort(string ip, int port)
@@ -26,15 +33,22 @@ namespace Network
         public void StartConnect()
         {
             IPAddress ipAddress = IPAddress.Parse(_ip);
-            clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, _prot);
+            clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             clientSocket.SendTimeout = 20000;
 
             try
             {
-                StateObject stateObject = new StateObject();
-                stateObject.socket = clientSocket;
-                stateObject.socket.BeginConnect(ipEndPoint, ConnectCallBack, stateObject);  // 异步连接
+                StateObject state = new StateObject();
+                state.workSocket = clientSocket;
+                // Connect to the remote endpoint.  
+                state.workSocket.BeginConnect(ipEndPoint, ConnectCallBack, state);  // 异步连接
+
+                // 用于暂停主线程的执行，并在可以继续执行时发出信号
+                connectDone.WaitOne();
+
+                Receive(clientSocket);
+                receiveDone.WaitOne();
             }
             catch (Exception ex)
             {
@@ -47,10 +61,14 @@ namespace Network
         {
             try
             {
-                StateObject stateObject = (StateObject)ar.AsyncState;
-                Socket socket = stateObject.socket;
+                StateObject state = (StateObject)ar.AsyncState;
+                Socket socket = state.workSocket;
                 socket.EndConnect(ar);
-                Debug.Log("连接服务器成功");
+                Debug.Log("连接服务器成功:" + socket.RemoteEndPoint.ToString());
+
+                // 当远程设备可用时，它连接到远程设备，然后通过设置ManualResetEvent 向应用程序线程发送连接已完成的信号connectDone
+                // Signal that the connection has been made.
+                connectDone.Set();
             }
             catch (Exception ex)
             {
@@ -61,13 +79,15 @@ namespace Network
         /// <summary>
         /// 接收消息
         /// </summary>
-        public void ReceiveMessage()
+        public void Receive(Socket client)
         {
             try
             {
-                StateObject stateObject = new StateObject();
-                stateObject.socket = clientSocket;
-                stateObject.socket.BeginReceive(stateObject.bytes, 0, stateObject.size, 0, new AsyncCallback(ReceiveCallBack), stateObject);
+                // Create the state object
+                StateObject state = new StateObject();
+                state.workSocket = clientSocket;
+                // Begin receiving the data from the remote device.  
+                state.workSocket.BeginReceive(state.buffer, 0, StateObject.bufferSize, 0, new AsyncCallback(ReceiveCallBack), state);
             }
             catch (Exception ex)
             {
@@ -81,13 +101,22 @@ namespace Network
         {
             try
             {
-                StateObject stateObject = (StateObject)ar.AsyncState;
-                Socket socket = stateObject.socket;
-                int REnd = socket.EndReceive(ar);
-                if (REnd > 0)
+                // Retrieve the state object and the client socket
+                // from the asynchronous state object. 
+                StateObject state = (StateObject)ar.AsyncState;
+                Socket client = state.workSocket;
+                // Read data from the remote device.  
+                int bytesRead = client.EndReceive(ar);
+                if (bytesRead > 0)
                 {
-                    Receive.ReceiveMessage(stateObject.bytes);
-                    ReceiveMessage();
+                    _receive.ReceiveMessage(state.buffer);
+                    Receive(client);
+                }
+                else
+                {
+                    // All the data has arrived; put it in response. 
+                    _receive.ReceiveMessage(new byte[] { });
+                    receiveDone.Set();
                 }
             }
             catch (SocketException se)
@@ -96,17 +125,17 @@ namespace Network
             }
         }
 
-        public void SendMessage(int cmdID, string msg)
+        public void Send(int uid, int cmdID, string msg)
         {
             byte[] bytes = Encoding.Default.GetBytes(msg);
-            SendMessage(cmdID, bytes);
+            Send(uid, cmdID, bytes);
         }
 
         /// <summary>
         /// 发送消息
         /// </summary>
         /// <param name="bytes"></param>
-        public void SendMessage(int cmdID, byte[] bytes)
+        public void Send(int uid, int cmdID, byte[] bytes)
         {
             try
             {
@@ -122,9 +151,10 @@ namespace Network
                 byteBuffer.WriteBytes(bytes);
 
                 StateObject stateObject = new StateObject();
-                stateObject.socket = clientSocket;
+                stateObject.workSocket = clientSocket;
                 byte[] byteData = byteBuffer.GetData();
-                stateObject.socket.BeginSend(byteData, 0, byteData.Length, 0, SendCallBack, stateObject);
+                // 异步发送数据到指定套接字所代表的网络设备
+                stateObject.workSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallBack, stateObject);
             }
             catch (Exception ex)
             {
@@ -140,9 +170,12 @@ namespace Network
         {
             try
             {
-                StateObject stateObject = (StateObject)ar.AsyncState;
-                Socket socket = stateObject.socket;
+                StateObject state = (StateObject)ar.AsyncState;
+                Socket socket = state.workSocket;
                 socket.EndSend(ar);
+
+                // Siganl that all bytes have been set
+                sendDone.Set();
             }
             catch (SocketException se)
             {
@@ -163,6 +196,12 @@ namespace Network
             {
                 Debug.Log(ex.Message);
             }
+        }
+
+        private void ReceiveComplete(int uid, int cmdID, byte[] byteData)
+        {
+            string content = Encoding.ASCII.GetString(byteData);
+            Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   content : " + content);
         }
     }
 }

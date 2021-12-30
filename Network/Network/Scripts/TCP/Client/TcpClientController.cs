@@ -29,15 +29,16 @@ namespace Network
 
         private void Input()
         {
-            Console.WriteLine("请输入要发送的消息ID");
+            Console.WriteLine("请输入UID");
+            string uid = Console.ReadLine();
+        
+            Console.WriteLine("请输入cmdID");
             string cmdID = Console.ReadLine();
-            int id = 0;
-            int.TryParse(cmdID, out id);
 
-            Console.WriteLine("请输入要发型的消息内容");
+            Console.WriteLine("请输入消息内容");
             string msg = Console.ReadLine();
 
-            _tcpClient.SendMessage(id, msg);
+            _tcpClient.Send(int.Parse(uid), int.Parse(cmdID), msg);
         }
     }
 

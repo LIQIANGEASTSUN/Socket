@@ -9,8 +9,8 @@ namespace Network
 {
     class StateObject
     {
-        public Socket socket;
-        public byte[] bytes = new byte[1024];
-        public int size = 1024;
+        public Socket workSocket;
+        public const int bufferSize = 1024;
+        public byte[] buffer = new byte[bufferSize];
     }
 }
