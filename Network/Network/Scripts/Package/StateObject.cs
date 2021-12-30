@@ -7,10 +7,14 @@ using System.Net.Sockets;
 
 namespace Network
 {
-    class StateObject
+    public class StateObject
     {
         public Socket workSocket;
         public const int bufferSize = 1024;
         public byte[] buffer = new byte[bufferSize];
+    }
+    public class StateUdpObject : StateObject
+    {
+        public EndPoint remote = new IPEndPoint(IPAddress.Any, 0);
     }
 }

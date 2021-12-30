@@ -97,7 +97,7 @@ namespace Network
                 StateObject state = new StateObject();
                 state.workSocket = handler;
                 // Begin receiving the data from the remote device.  
-                handler.BeginReceive(state.buffer, 0, StateObject.bufferSize, 0, new AsyncCallback(ReceiveCallBack), state);
+                handler.BeginReceive(state.buffer, 0, StateObject.bufferSize, SocketFlags.None, new AsyncCallback(ReceiveCallBack), state);
             }
             catch (Exception ex)
             {
@@ -168,7 +168,7 @@ namespace Network
             byteBuffer.WriteBytes(byteData);
             byte[] sendBytes = byteBuffer.GetData();
 
-            handler.BeginSend(sendBytes, 0, sendBytes.Length, 0, new AsyncCallback(SendCallBack), handler);
+            handler.BeginSend(sendBytes, 0, sendBytes.Length, SocketFlags.None, new AsyncCallback(SendCallBack), handler);
         }
 
         private void SendCallBack(IAsyncResult ar)

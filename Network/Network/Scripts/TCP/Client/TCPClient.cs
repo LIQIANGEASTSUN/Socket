@@ -87,7 +87,7 @@ namespace Network
                 StateObject state = new StateObject();
                 state.workSocket = clientSocket;
                 // Begin receiving the data from the remote device.  
-                state.workSocket.BeginReceive(state.buffer, 0, StateObject.bufferSize, 0, new AsyncCallback(ReceiveCallBack), state);
+                state.workSocket.BeginReceive(state.buffer, 0, StateObject.bufferSize, SocketFlags.None, new AsyncCallback(ReceiveCallBack), state);
             }
             catch (Exception ex)
             {
@@ -154,7 +154,7 @@ namespace Network
                 stateObject.workSocket = clientSocket;
                 byte[] byteData = byteBuffer.GetData();
                 // 异步发送数据到指定套接字所代表的网络设备
-                stateObject.workSocket.BeginSend(byteData, 0, byteData.Length, 0, SendCallBack, stateObject);
+                stateObject.workSocket.BeginSend(byteData, 0, byteData.Length, SocketFlags.None, SendCallBack, stateObject);
             }
             catch (Exception ex)
             {
