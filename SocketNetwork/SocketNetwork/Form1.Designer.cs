@@ -208,7 +208,6 @@
             this.ReceiveBox.Name = "ReceiveBox";
             this.ReceiveBox.Size = new System.Drawing.Size(342, 139);
             this.ReceiveBox.TabIndex = 15;
-            this.ReceiveBox.TextChanged += new System.EventHandler(this.ReceiveBox_TextChanged);
             // 
             // label4
             // 

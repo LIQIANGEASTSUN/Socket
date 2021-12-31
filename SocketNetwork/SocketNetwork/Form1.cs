@@ -123,11 +123,6 @@ namespace Network
             NetworkController.Instance.Send(SendInputBox.Text);
         }
 
-        // 接收消息文本框
-        private void ReceiveBox_TextChanged(object sender, EventArgs e)
-        {
-        }
-
         private void Receive(object msg)
         {
             ReceiveBox.Text = string.Format("{0}\n{1}", ReceiveBox.Text, msg);

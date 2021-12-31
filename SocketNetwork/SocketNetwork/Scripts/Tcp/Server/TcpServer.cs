@@ -12,19 +12,26 @@ namespace Network
 
     class TcpServer
     {
+        private Socket listener;
         private ManualResetEvent allDone = new ManualResetEvent(false);
 
         private Dictionary<Socket, Receive> _recevieDic = new Dictionary<Socket, Receive>();
+
+        private Thread thread;
+        /*
+                     this.demoThread = new Thread(new ThreadStart(this.ThreadProcSafePost));
+
+        */
+
         public TcpServer()
         {
-
         }
 
         public void Start(string ip, int port)
         {
             IPAddress ipAddress = IPAddress.Parse(ip);    // 服务器 IP
             IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, port);
-            Socket listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             //确定本地端点后，必须使用Bind方法将Socket与该端点关联，并使用Listen方法设置为侦听端点。
             //如果特定地址和端口组合已在使用中，则Bind将引发异常
             try
@@ -32,14 +39,17 @@ namespace Network
                 listener.Bind(ipEndPoint);
                 // 连接队列中最多放置 100 个客户端
                 listener.Listen(100);
-
-                StartAccept(listener);
+                thread = new Thread(StartAcceptTTT);
+                thread.Start();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
+        }
 
+        private void StartAcceptTTT()
+        {
             StartAccept(listener);
         }
 
