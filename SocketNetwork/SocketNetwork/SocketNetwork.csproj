@@ -58,9 +58,10 @@
     <Compile Include="Scripts\IipPort\INetwork.cs" />
     <Compile Include="Scripts\NetworkController.cs" />
     <Compile Include="Scripts\NetworkData.cs" />
-    <Compile Include="Scripts\Package\Receive.cs" />
+    <Compile Include="Scripts\Package\TcpReceive.cs" />
     <Compile Include="Scripts\Package\SendData.cs" />
     <Compile Include="Scripts\Package\StateObject.cs" />
+    <Compile Include="Scripts\Package\UdpReceive.cs" />
     <Compile Include="Scripts\Tcp\Client\TcpClient.cs" />
     <Compile Include="Scripts\Tcp\Client\TcpClientController.cs" />
     <Compile Include="Scripts\Tcp\Server\TcpServer.cs" />

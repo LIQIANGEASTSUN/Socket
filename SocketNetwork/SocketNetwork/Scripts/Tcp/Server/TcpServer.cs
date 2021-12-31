@@ -15,13 +15,8 @@ namespace Network
         private Socket listener;
         private ManualResetEvent allDone = new ManualResetEvent(false);
 
-        private Dictionary<Socket, Receive> _recevieDic = new Dictionary<Socket, Receive>();
-
+        private Dictionary<Socket, TcpReceive> _recevieDic = new Dictionary<Socket, TcpReceive>();
         private Thread thread;
-        /*
-                     this.demoThread = new Thread(new ThreadStart(this.ThreadProcSafePost));
-
-        */
 
         public TcpServer()
         {
@@ -82,9 +77,9 @@ namespace Network
 
             Socket listener = (Socket)ar.AsyncState;
             Socket handler = listener.EndAccept(ar);
-            Receive receive = new Receive();
-            receive.SetCompleteCallBack(ReceiveComplete);
-            _recevieDic[handler] = receive;
+            TcpReceive tcpReceive = new TcpReceive();
+            tcpReceive.SetCompleteCallBack(ReceiveComplete);
+            _recevieDic[handler] = tcpReceive;
 
             ReceiveMessage(handler);
         }
@@ -118,8 +113,8 @@ namespace Network
                 int read = handler.EndReceive(ar);
                 if (read > 0)
                 {
-                    Receive receive = _recevieDic[handler];
-                    receive.ReceiveMessage(state.buffer);
+                    TcpReceive tcpRecieve = _recevieDic[handler];
+                    tcpRecieve.ReceiveMessage(state.buffer);
                     ReceiveMessage(handler);
                 }
                 else

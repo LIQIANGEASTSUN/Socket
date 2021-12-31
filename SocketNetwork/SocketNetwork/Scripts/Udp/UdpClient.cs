@@ -10,12 +10,12 @@ namespace Network
     class UdpClient
     {
         private Socket _socket;
-        private Receive _receive;
+        private UdpReceive _udpReceive;
 
         public UdpClient()
         {
-            _receive = new Receive();
-            _receive.SetCompleteCallBack(ReceiveComplete);
+            _udpReceive = new UdpReceive();
+            _udpReceive.SetCompleteCallBack(ReceiveComplete);
         }
 
         public void StartBind(string ip, int port)
@@ -37,11 +37,11 @@ namespace Network
 
         private void ReceiveCallBack(IAsyncResult ar)
         {
-            StateUdpObject state = ar as StateUdpObject;
             try
             {
+                StateUdpObject state = ar.AsyncState as StateUdpObject;
                 int read = state.workSocket.EndReceiveFrom(ar, ref state.remote);
-                _receive.ReceiveMessage(state.buffer);
+                _udpReceive.ReceiveMessage(state.buffer);
                 BeginReceive();
             }
             catch (Exception ex)
@@ -89,7 +89,7 @@ namespace Network
         {
             try
             {
-                StateObject state = (StateObject)ar.AsyncState;
+                StateUdpObject state = ar.AsyncState as StateUdpObject;
                 Socket socket = state.workSocket;
                 socket.EndSendTo(ar);
             }

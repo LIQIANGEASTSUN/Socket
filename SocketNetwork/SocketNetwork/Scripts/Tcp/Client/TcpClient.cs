@@ -15,11 +15,11 @@ namespace Network
         private ManualResetEvent sendDone = new ManualResetEvent(false);
         private ManualResetEvent receiveDone = new ManualResetEvent(false);
 
-        private Receive _receive;
+        private TcpReceive _tcpReceive;
         public TcpClient()
         {
-            _receive = new Receive();
-            _receive.SetCompleteCallBack(ReceiveComplete);
+            _tcpReceive = new TcpReceive();
+            _tcpReceive.SetCompleteCallBack(ReceiveComplete);
         }
 
         public void StartConnect(string ip, int port)
@@ -101,13 +101,13 @@ namespace Network
                 int bytesRead = client.EndReceive(ar);
                 if (bytesRead > 0)
                 {
-                    _receive.ReceiveMessage(state.buffer);
+                    _tcpReceive.ReceiveMessage(state.buffer);
                     Receive(client);
                 }
                 else
                 {
                     // All the data has arrived; put it in response. 
-                    _receive.ReceiveMessage(new byte[] { });
+                    _tcpReceive.ReceiveMessage(new byte[] { });
                     receiveDone.Set();
                 }
             }
