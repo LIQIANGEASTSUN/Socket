@@ -4,35 +4,33 @@ using System.Text;
 
 namespace Network
 {
-    class UdpClientController : IipPort
+    class UdpClientController : INetwork
     {
         private UdpClient _udpClient;
+        private NetworkData _networkData;
 
-        private string _remoteIp;
-        private int _remotePort = 0;
         public UdpClientController()
         {
             _udpClient = new UdpClient();
         }
 
-        public void SetIpAndPort(string ip, int port)
+        public void SetData(NetworkData networkData)
         {
-            _udpClient.SetIpAndPort(ip, port);
+            _networkData = networkData;
         }
 
-        public void Init()
+        public void Start()
         {
-            _udpClient.StartBind();
+            _udpClient.StartBind(_networkData.localIp, _networkData.localPort);
+            //while (true)
+            //{
+            //    Input();
+            //}
+        }
 
-            Console.WriteLine("请输入远端IP");
-            _remoteIp = Console.ReadLine();
-            Console.WriteLine("请输入远端端口");
-            _remotePort = int.Parse(Console.ReadLine());
-
-            while (true)
-            {
-                Input();
-            }
+        public void Send(string msg)
+        {
+            _udpClient.Send(_networkData.uid, _networkData.cmdID, _networkData.remoteIp, _networkData.remotePort, msg);
         }
 
         private void Input()
@@ -46,7 +44,7 @@ namespace Network
             Console.WriteLine("请输入消息内容");
             string msg = Console.ReadLine();
 
-            _udpClient.Send(int.Parse(uid), int.Parse(cmdID), _remoteIp, _remotePort, msg);
+            _udpClient.Send(int.Parse(uid), int.Parse(cmdID), _networkData.remoteIp, _networkData.remotePort, msg);
         }
     }
 }

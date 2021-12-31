@@ -7,11 +7,9 @@ using System.Threading;
 
 namespace Network
 {
-    class TcpClient : IipPort
+    class TcpClient
     {
         private Socket clientSocket = null;
-        private string _ip = "10.1.10.103";
-        private int _prot = 8000;
 
         private ManualResetEvent connectDone = new ManualResetEvent(false);
         private ManualResetEvent sendDone = new ManualResetEvent(false);
@@ -24,16 +22,10 @@ namespace Network
             _receive.SetCompleteCallBack(ReceiveComplete);
         }
 
-        public void SetIpAndPort(string ip, int port)
+        public void StartConnect(string ip, int port)
         {
-            _ip = ip;
-            _prot = port;
-        }
-
-        public void StartConnect()
-        {
-            IPAddress ipAddress = IPAddress.Parse(_ip);
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, _prot);
+            IPAddress ipAddress = IPAddress.Parse(ip);
+            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, port);
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             clientSocket.SendTimeout = 20000;
 

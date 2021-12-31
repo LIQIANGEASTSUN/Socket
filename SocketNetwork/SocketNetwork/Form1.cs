@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SocketNetwork
+namespace Network
 {
     public partial class Form1 : Form
     {
@@ -35,6 +35,7 @@ namespace SocketNetwork
                 if (e.NewValue == CheckState.Checked)
                 {
                     CSSelectBox.Show();
+                    NetworkController.Instance.NetworkData.networkType = NetworkType.Tcp;
                 }
                 else
                 {
@@ -47,6 +48,7 @@ namespace SocketNetwork
                 {
                     CSSelectBox.Hide();
                     LocalGroup.Show();
+                    NetworkController.Instance.NetworkData.networkType = NetworkType.Udp;
                 }
                 else
                 {
@@ -68,18 +70,20 @@ namespace SocketNetwork
                 }
             }
 
-            if (e.Index == 0)  // TcpClient
+            if (e.Index == 0)  // Client
             {
                 if (e.NewValue == CheckState.Checked)
                 {
                     LocalGroup.Hide();
+                    NetworkController.Instance.NetworkData.networkCS = NetworkCS.Client;
                 }
             }
-            else if (e.Index == 1) // TcpServer
+            else if (e.Index == 1) // Server
             {
                 if (e.NewValue == CheckState.Checked)
                 {
                     LocalGroup.Show();
+                    NetworkController.Instance.NetworkData.networkCS = NetworkCS.Server;
                 }
                 else
                 {
@@ -88,44 +92,37 @@ namespace SocketNetwork
             }
         }
 
-        private void RemoteTextBox_TextChanged(object sender, EventArgs e)
+        // 启动按钮
+        private void StartBtn_Click(object sender, EventArgs e)
         {
+            NetworkController.Instance.NetworkData.localIp = LocalIPText.Text;
+            string localPort = LocalPortText.Text;
+            NetworkController.Instance.NetworkData.localPort = int.Parse(localPort);
 
+            NetworkController.Instance.NetworkData.remoteIp = RemoteIPBox.Text;
+            string remotePort = RemotePortText.Text;
+            NetworkController.Instance.NetworkData.remotePort = int.Parse(remotePort);
+
+            NetworkController.Instance.Start();
         }
 
-        private void RemoteIPLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        // 发送消息按钮
         private void SendBtn_Click(object sender, EventArgs e)
         {
+            string uid = Uidbox.Text;
+            NetworkController.Instance.NetworkData.uid = int.Parse(uid);
 
+            string cmdId = CmdBox.Text;
+            NetworkController.Instance.NetworkData.cmdID = int.Parse(cmdId);
+
+            NetworkController.Instance.Send(SendInputBox.Text);
         }
 
-        private void groupBox1_Enter(object sender, EventArgs e)
+        // 接收消息文本框
+        private void ReceiveBox_TextChanged(object sender, EventArgs e)
         {
-
+            // ReceiveBox
         }
 
-        private void LocalIPText_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void LocalPortText_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }

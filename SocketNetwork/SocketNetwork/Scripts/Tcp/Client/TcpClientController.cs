@@ -4,27 +4,32 @@ using System.Text;
 
 namespace Network
 {
-    class TcpClientController : IipPort
+    class TcpClientController : INetwork
     {
         private TcpClient _tcpClient;
+        private NetworkData _networkData;
         public TcpClientController()
         {
             _tcpClient = new TcpClient();
         }
 
-        public void SetIpAndPort(string ip, int port)
+        public void SetData(NetworkData networkData)
         {
-            _tcpClient.SetIpAndPort(ip, port);
+            _networkData = networkData;
         }
 
-        public void Init()
+        public void Start()
         {
-            _tcpClient.StartConnect();
+            _tcpClient.StartConnect(_networkData.remoteIp, _networkData.remotePort);
+            //while (true)
+            //{
+            //    Input();
+            //}
+        }
 
-            while (true)
-            {
-                Input();
-            }
+        public void Send(string msg)
+        {
+            _tcpClient.Send(_networkData.uid, _networkData.cmdID, msg);
         }
 
         private void Input()

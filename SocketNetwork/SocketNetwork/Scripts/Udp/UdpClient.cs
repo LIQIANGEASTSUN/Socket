@@ -7,15 +7,13 @@ using System.Threading;
 
 namespace Network
 {
-    class UdpClient : IipPort
+    class UdpClient
     {
 
         // public IAsyncResult BeginSendTo(byte[] buffer, int offset, int size, SocketFlags socketFlags, EndPoint remoteEP, AsyncCallback callback, object state);
 
         // public IAsyncResult BeginReceiveFrom(byte[] buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP, AsyncCallback callback, object state);
 
-        private string _ip = "10.1.10.103";
-        private int _prot = 8000;
         private Socket _socket;
         private Receive _receive;
 
@@ -25,16 +23,10 @@ namespace Network
             _receive.SetCompleteCallBack(ReceiveComplete);
         }
 
-        public void SetIpAndPort(string ip, int port)
+        public void StartBind(string ip, int port)
         {
-            _ip = ip;
-            _prot = port;
-        }
-
-        public void StartBind()
-        {
-            IPAddress ipAddress = IPAddress.Parse(_ip);
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, _prot);
+            IPAddress ipAddress = IPAddress.Parse(ip);
+            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, port);
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _socket.Bind(ipEndPoint);
 

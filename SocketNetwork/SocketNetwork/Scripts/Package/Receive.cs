@@ -9,15 +9,13 @@ namespace Network
     {
         private ByteBuffer byteBuffer;
 
-        private int head = 0;
-        private int cmd = 0;
+        private const int head = 4;
+        private const int cmd = 4;
 
         private Action<int, int, byte[]> _callBack;
         public Receive()
         {
             byteBuffer = new ByteBuffer(1024);
-            head = 4;
-            cmd = 4;
         }
 
         public void SetCompleteCallBack(Action<int, int, byte[]> callBacka)

@@ -55,6 +55,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripts\IipPort\IipPort.cs" />
+    <Compile Include="Scripts\IipPort\INetwork.cs" />
+    <Compile Include="Scripts\NetworkController.cs" />
+    <Compile Include="Scripts\NetworkData.cs" />
     <Compile Include="Scripts\Package\ByteBuffer.cs" />
     <Compile Include="Scripts\Package\Receive.cs" />
     <Compile Include="Scripts\Package\StateObject.cs" />

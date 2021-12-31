@@ -10,10 +10,8 @@ using System.Net;
 namespace Network
 {
 
-    class TcpServer : IipPort
+    class TcpServer
     {
-        private string _ip = "10.1.10.103";
-        private int _prot = 8000;
         private ManualResetEvent allDone = new ManualResetEvent(false);
 
         private Dictionary<Socket, Receive> _recevieDic = new Dictionary<Socket, Receive>();
@@ -22,16 +20,10 @@ namespace Network
 
         }
 
-        public void SetIpAndPort(string ip, int port)
+        public void Start(string ip, int port)
         {
-            _ip = ip;
-            _prot = port;
-        }
-
-        public void Start()
-        {
-            IPAddress ipAddress = IPAddress.Parse(_ip);    // 服务器 IP
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, _prot);
+            IPAddress ipAddress = IPAddress.Parse(ip);    // 服务器 IP
+            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, port);
             Socket listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             //确定本地端点后，必须使用Bind方法将Socket与该端点关联，并使用Listen方法设置为侦听端点。
             //如果特定地址和端口组合已在使用中，则Bind将引发异常

@@ -1,4 +1,4 @@
-﻿namespace SocketNetwork
+﻿namespace Network
 {
     partial class Form1
     {
@@ -31,7 +31,7 @@
             System.Windows.Forms.CheckedListBox TcpUdpCheckBox;
             this.CSSelectBox = new System.Windows.Forms.CheckedListBox();
             this.RemoteIPLabel = new System.Windows.Forms.Label();
-            this.RemoteTextBox = new System.Windows.Forms.TextBox();
+            this.RemoteIPBox = new System.Windows.Forms.TextBox();
             this.RemotePort = new System.Windows.Forms.Label();
             this.RemotePortText = new System.Windows.Forms.TextBox();
             this.SendInputBox = new System.Windows.Forms.TextBox();
@@ -43,7 +43,7 @@
             this.LocalPortText = new System.Windows.Forms.TextBox();
             this.LocalGroup = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.ReceiveBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -51,6 +51,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.CmdBox = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.StartBtn = new System.Windows.Forms.Button();
             TcpUdpCheckBox = new System.Windows.Forms.CheckedListBox();
             this.LocalGroup.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -72,8 +73,8 @@
             // 
             this.CSSelectBox.FormattingEnabled = true;
             this.CSSelectBox.Items.AddRange(new object[] {
-            "Tcp客户端",
-            "Tcp服务器"});
+            "客户端",
+            "服务器"});
             this.CSSelectBox.Location = new System.Drawing.Point(177, 56);
             this.CSSelectBox.Name = "CSSelectBox";
             this.CSSelectBox.Size = new System.Drawing.Size(120, 36);
@@ -89,16 +90,14 @@
             this.RemoteIPLabel.Size = new System.Drawing.Size(53, 12);
             this.RemoteIPLabel.TabIndex = 2;
             this.RemoteIPLabel.Text = "远端地址";
-            this.RemoteIPLabel.Click += new System.EventHandler(this.RemoteIPLabel_Click);
             // 
-            // RemoteTextBox
+            // RemoteIPBox
             // 
-            this.RemoteTextBox.Location = new System.Drawing.Point(65, 20);
-            this.RemoteTextBox.Name = "RemoteTextBox";
-            this.RemoteTextBox.Size = new System.Drawing.Size(127, 21);
-            this.RemoteTextBox.TabIndex = 3;
-            this.RemoteTextBox.Text = "10.0.116.245";
-            this.RemoteTextBox.TextChanged += new System.EventHandler(this.RemoteTextBox_TextChanged);
+            this.RemoteIPBox.Location = new System.Drawing.Point(65, 20);
+            this.RemoteIPBox.Name = "RemoteIPBox";
+            this.RemoteIPBox.Size = new System.Drawing.Size(127, 21);
+            this.RemoteIPBox.TabIndex = 3;
+            this.RemoteIPBox.Text = "10.0.116.245";
             // 
             // RemotePort
             // 
@@ -161,7 +160,6 @@
             this.LocalIPText.Size = new System.Drawing.Size(133, 21);
             this.LocalIPText.TabIndex = 10;
             this.LocalIPText.Text = "10.0.116.245";
-            this.LocalIPText.TextChanged += new System.EventHandler(this.LocalIPText_TextChanged);
             // 
             // Label5
             // 
@@ -179,7 +177,6 @@
             this.LocalPortText.Size = new System.Drawing.Size(133, 21);
             this.LocalPortText.TabIndex = 12;
             this.LocalPortText.Text = "8000";
-            this.LocalPortText.TextChanged += new System.EventHandler(this.LocalPortText_TextChanged);
             // 
             // LocalGroup
             // 
@@ -193,26 +190,25 @@
             this.LocalGroup.TabIndex = 13;
             this.LocalGroup.TabStop = false;
             this.LocalGroup.Visible = false;
-            this.LocalGroup.Enter += new System.EventHandler(this.groupBox1_Enter);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(13, 12);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(641, 12);
+            this.label3.Size = new System.Drawing.Size(749, 12);
             this.label3.TabIndex = 14;
-            this.label3.Text = "请先选择使用 Tcp/Udp，选择Tcp还需要选择作为Client/Server，选择 TcpServer、Udp 则需要输入本地地址和本地端口";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
+            this.label3.Text = "请先选择使用 Tcp/Udp，选择Tcp还需要选择作为Client/Server，选择 TcpServer、Udp 则需要输入本地地址和本地端口，然后点击启动按钮" +
+    "\r\n";
             // 
-            // textBox1
+            // ReceiveBox
             // 
-            this.textBox1.Location = new System.Drawing.Point(434, 246);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(342, 139);
-            this.textBox1.TabIndex = 15;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.ReceiveBox.Location = new System.Drawing.Point(434, 246);
+            this.ReceiveBox.Multiline = true;
+            this.ReceiveBox.Name = "ReceiveBox";
+            this.ReceiveBox.Size = new System.Drawing.Size(342, 139);
+            this.ReceiveBox.TabIndex = 15;
+            this.ReceiveBox.TextChanged += new System.EventHandler(this.ReceiveBox_TextChanged);
             // 
             // label4
             // 
@@ -226,7 +222,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(19, 153);
+            this.label6.Location = new System.Drawing.Point(13, 187);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(41, 12);
             this.label6.TabIndex = 17;
@@ -235,7 +231,7 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.RemoteIPLabel);
-            this.groupBox1.Controls.Add(this.RemoteTextBox);
+            this.groupBox1.Controls.Add(this.RemoteIPBox);
             this.groupBox1.Controls.Add(this.RemotePort);
             this.groupBox1.Controls.Add(this.RemotePortText);
             this.groupBox1.Location = new System.Drawing.Point(560, 39);
@@ -246,16 +242,16 @@
             // 
             // Uidbox
             // 
-            this.Uidbox.Location = new System.Drawing.Point(66, 150);
+            this.Uidbox.Location = new System.Drawing.Point(60, 184);
             this.Uidbox.Name = "Uidbox";
-            this.Uidbox.Size = new System.Drawing.Size(121, 21);
+            this.Uidbox.Size = new System.Drawing.Size(99, 21);
             this.Uidbox.TabIndex = 19;
             this.Uidbox.Text = "100";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(19, 184);
+            this.label7.Location = new System.Drawing.Point(180, 187);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(41, 12);
             this.label7.TabIndex = 20;
@@ -263,9 +259,9 @@
             // 
             // CmdBox
             // 
-            this.CmdBox.Location = new System.Drawing.Point(66, 184);
+            this.CmdBox.Location = new System.Drawing.Point(227, 184);
             this.CmdBox.Name = "CmdBox";
-            this.CmdBox.Size = new System.Drawing.Size(121, 21);
+            this.CmdBox.Size = new System.Drawing.Size(104, 21);
             this.CmdBox.TabIndex = 21;
             this.CmdBox.Text = "10001";
             // 
@@ -277,11 +273,22 @@
             this.label8.Size = new System.Drawing.Size(0, 12);
             this.label8.TabIndex = 22;
             // 
+            // StartBtn
+            // 
+            this.StartBtn.Location = new System.Drawing.Point(60, 139);
+            this.StartBtn.Name = "StartBtn";
+            this.StartBtn.Size = new System.Drawing.Size(75, 23);
+            this.StartBtn.TabIndex = 23;
+            this.StartBtn.Text = "启动";
+            this.StartBtn.UseVisualStyleBackColor = true;
+            this.StartBtn.Click += new System.EventHandler(this.StartBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.StartBtn);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.CmdBox);
             this.Controls.Add(this.label7);
@@ -289,7 +296,7 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.ReceiveBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.LocalGroup);
             this.Controls.Add(this.SendBtn);
@@ -317,7 +324,7 @@
 
         private System.Windows.Forms.CheckedListBox CSSelectBox;
         private System.Windows.Forms.Label RemoteIPLabel;
-        private System.Windows.Forms.TextBox RemoteTextBox;
+        private System.Windows.Forms.TextBox RemoteIPBox;
         private System.Windows.Forms.Label RemotePort;
         private System.Windows.Forms.TextBox RemotePortText;
         private System.Windows.Forms.TextBox SendInputBox;
@@ -329,7 +336,7 @@
         private System.Windows.Forms.TextBox LocalPortText;
         private System.Windows.Forms.GroupBox LocalGroup;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox ReceiveBox;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -337,6 +344,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox CmdBox;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button StartBtn;
     }
 }
 
