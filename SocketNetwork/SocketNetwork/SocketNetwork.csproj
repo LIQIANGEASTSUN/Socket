@@ -60,6 +60,7 @@
     <Compile Include="Scripts\NetworkData.cs" />
     <Compile Include="Scripts\Package\ByteBuffer.cs" />
     <Compile Include="Scripts\Package\Receive.cs" />
+    <Compile Include="Scripts\Package\SendData.cs" />
     <Compile Include="Scripts\Package\StateObject.cs" />
     <Compile Include="Scripts\Tcp\Client\TcpClient.cs" />
     <Compile Include="Scripts\Tcp\Client\TcpClientController.cs" />
