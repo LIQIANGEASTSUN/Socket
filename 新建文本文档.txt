@@ -1,0 +1,4 @@
+
+
+请先选择使用 Tcp/Udp，选择Tcp还需要选择作为Client/Server
+选择 TcpServer、Udp 则需要输入本地地址和本地端口
