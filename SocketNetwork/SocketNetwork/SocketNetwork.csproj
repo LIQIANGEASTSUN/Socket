@@ -54,6 +54,17 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripts\IipPort\IipPort.cs" />
+    <Compile Include="Scripts\Package\ByteBuffer.cs" />
+    <Compile Include="Scripts\Package\Receive.cs" />
+    <Compile Include="Scripts\Package\StateObject.cs" />
+    <Compile Include="Scripts\Tcp\Client\TcpClient.cs" />
+    <Compile Include="Scripts\Tcp\Client\TcpClientController.cs" />
+    <Compile Include="Scripts\Tcp\Server\TcpServer.cs" />
+    <Compile Include="Scripts\Tcp\Server\TcpServerController.cs" />
+    <Compile Include="Scripts\Tool\Debug.cs" />
+    <Compile Include="Scripts\Udp\UdpClient.cs" />
+    <Compile Include="Scripts\Udp\UdpClientController.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
