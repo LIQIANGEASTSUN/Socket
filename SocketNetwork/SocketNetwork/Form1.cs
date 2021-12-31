@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -12,9 +13,12 @@ namespace Network
 {
     public partial class Form1 : Form
     {
+        SynchronizationContext m_SyncContext = null;
+
         public Form1()
         {
             InitializeComponent();
+            m_SyncContext = SynchronizationContext.Current;
         }
 
         private void TcpUdpCheckBox_SelectedIndexChanged(object sender, ItemCheckEventArgs e)
@@ -104,6 +108,7 @@ namespace Network
             NetworkController.Instance.NetworkData.remotePort = int.Parse(remotePort);
 
             NetworkController.Instance.Start();
+            setSafePostBtn_Click();
         }
 
         // 发送消息按钮
@@ -121,8 +126,35 @@ namespace Network
         // 接收消息文本框
         private void ReceiveBox_TextChanged(object sender, EventArgs e)
         {
-            // ReceiveBox
         }
 
+        private void Receive(object msg)
+        {
+            ReceiveBox.Text = string.Format("{0}\n{1}", ReceiveBox.Text, msg);
+        }
+
+        #region Receive
+        private void ThreadProcSafePost()
+        {
+            //...执行线程任务
+            while (true)
+            {
+                Thread.Sleep(1000);
+                while (NetworkController.Instance.ReceiveQueue.Count > 0)
+                {
+                    string msg = NetworkController.Instance.ReceiveQueue.Dequeue();
+                    //在线程中更新UI（通过UI线程同步上下文m_SyncContext）
+                    m_SyncContext.Post(Receive, msg);
+                }
+            }
+        }
+
+        private Thread demoThread;
+        private void setSafePostBtn_Click()
+        {
+            this.demoThread = new Thread(new ThreadStart(this.ThreadProcSafePost));
+            this.demoThread.Start();
+        }
+        #endregion
     }
 }

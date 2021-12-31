@@ -50,7 +50,7 @@ namespace Network
 
         private void Udp()
         {
-            UDPClientController uDPClientController = new UDPClientController();
+            UdpClientController uDPClientController = new UdpClientController();
         }
 
     }

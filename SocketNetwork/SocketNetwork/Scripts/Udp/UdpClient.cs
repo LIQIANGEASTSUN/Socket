@@ -9,11 +9,6 @@ namespace Network
 {
     class UdpClient
     {
-
-        // public IAsyncResult BeginSendTo(byte[] buffer, int offset, int size, SocketFlags socketFlags, EndPoint remoteEP, AsyncCallback callback, object state);
-
-        // public IAsyncResult BeginReceiveFrom(byte[] buffer, int offset, int size, SocketFlags socketFlags, ref EndPoint remoteEP, AsyncCallback callback, object state);
-
         private Socket _socket;
         private Receive _receive;
 
@@ -69,16 +64,7 @@ namespace Network
         {
             try
             {
-                byte[] uidBytes = BitConverter.GetBytes(uid);
-                byte[] cmdBytes = BitConverter.GetBytes(cmdID);
-                int length = uidBytes.Length + cmdBytes.Length + bytes.Length;  // uid + cmd + 内容
-                byte[] lengthBytes = BitConverter.GetBytes(length);
-
-                ByteBuffer byteBuffer = new ByteBuffer((lengthBytes.Length + length));
-                byteBuffer.WriteInt(length);
-                byteBuffer.WriteBytes(uidBytes);
-                byteBuffer.WriteBytes(cmdBytes);
-                byteBuffer.WriteBytes(bytes);
+                byte[] bytesData = SendData.ToByte(uid, cmdID, bytes);
 
                 StateUdpObject stateObject = new StateUdpObject();
                 stateObject.workSocket = _socket;
@@ -86,9 +72,8 @@ namespace Network
                 IPAddress ipAddress = IPAddress.Parse(ip);
                 IPEndPoint remote = new IPEndPoint(ipAddress, port);
 
-                byte[] byteData = byteBuffer.GetData();
                 // 异步发送数据到指定套接字所代表的网络设备
-                _socket.BeginSendTo(byteData, 0, byteData.Length, SocketFlags.None, remote, SendCallBack, stateObject);
+                _socket.BeginSendTo(bytesData, 0, bytesData.Length, SocketFlags.None, remote, SendCallBack, stateObject);
             }
             catch (Exception ex)
             {
@@ -117,6 +102,10 @@ namespace Network
         private void ReceiveComplete(int uid, int cmdID, byte[] byteData)
         {
             string content = Encoding.ASCII.GetString(byteData);
+            if (null != NetworkController.receiveMessage)
+            {
+                NetworkController.receiveMessage(uid, cmdID, content);
+            }
             Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   content : " + content);
         }
 

@@ -26,7 +26,7 @@ namespace Network
 
         public void Send(string msg)
         {
-            
+            _tcpServer.Send(_networkData.uid, _networkData.cmdID, msg);
         }
     }
 }

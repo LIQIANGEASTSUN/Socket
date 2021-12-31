@@ -21,14 +21,20 @@ namespace Network
             int length = uidBytes.Length + cmdBytes.Length + bytesData.Length;  // uid + cmd + 内容
             byte[] lengthBytes = BitConverter.GetBytes(length);
 
-            ByteBuffer byteBuffer = new ByteBuffer((lengthBytes.Length + length));
-            byteBuffer.WriteInt(length);
-            byteBuffer.WriteBytes(uidBytes);
-            byteBuffer.WriteBytes(cmdBytes);
-            byteBuffer.WriteBytes(bytesData);
+            byte[] sendBytes = new byte[length + 4];
+            long index = 0;
+            Copy(lengthBytes, sendBytes, lengthBytes.Length, ref index);
+            Copy(uidBytes, sendBytes, uidBytes.Length, ref index);
+            Copy(cmdBytes, sendBytes, cmdBytes.Length, ref index);
+            Copy(bytesData, sendBytes, bytesData.Length, ref index);
 
-            byte[] byteData = byteBuffer.GetData();
-            return byteData;
+            return sendBytes;
+        }
+
+        private static void Copy(Array sourceArray, Array destinationArray, long length, ref long destinationIndex)
+        {
+            Array.Copy(sourceArray, 0, destinationArray, destinationIndex, length);
+            destinationIndex += length;
         }
 
     }

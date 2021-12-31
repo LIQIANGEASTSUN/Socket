@@ -6,15 +6,18 @@ using System.Threading.Tasks;
 
 namespace Network
 {
+    public delegate void ReceiveMessage(int uid, int cmdId, string msg);
     class NetworkController
     {
         public static readonly NetworkController Instance = new NetworkController();
-
+        public static ReceiveMessage receiveMessage;
         private NetworkData _networkData;
         private INetwork _iNetwork;
+        private Queue<string> _receiveQueue = new Queue<string>();
         private NetworkController()
         {
             _networkData = new NetworkData();
+            receiveMessage += Receive;
         }
 
         public void Start()
@@ -61,5 +64,19 @@ namespace Network
             }
         }
 
+        private void Receive(int uid, int cmdID, string msg)
+        {
+            string str = string.Format("uid:{0}_cmdID_{1}_msg_{2}", uid, cmdID, msg);
+            _receiveQueue.Enqueue(str);
+            //ReceiveBox.Text = string.Format("msg_{0}", msg);
+        }
+
+        public Queue<string> ReceiveQueue
+        {
+            get
+            {
+                return _receiveQueue;
+            }
+        }
     }
 }

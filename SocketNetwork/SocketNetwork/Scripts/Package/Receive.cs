@@ -14,11 +14,6 @@ namespace Network
         private const int uidBit = 4;
         private const int cmdBit = 4;
 
-        // Array.Copy(bytes, head + head + cmd, byteData, 0, byteData.Length);
-        // int uid = BitConverter.ToInt32(byteData, head);
-        // Array.Copy(byteBuffer.GetData(), (head + head + cmd), byteData, 0, headLength);
-        // Array.Copy(bytes, copyBytes, lastLentgh);
-
         private Action<int, int, byte[]> _callBack;
         public Receive()
         {

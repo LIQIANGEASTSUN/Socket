@@ -58,7 +58,6 @@
     <Compile Include="Scripts\IipPort\INetwork.cs" />
     <Compile Include="Scripts\NetworkController.cs" />
     <Compile Include="Scripts\NetworkData.cs" />
-    <Compile Include="Scripts\Package\ByteBuffer.cs" />
     <Compile Include="Scripts\Package\Receive.cs" />
     <Compile Include="Scripts\Package\SendData.cs" />
     <Compile Include="Scripts\Package\StateObject.cs" />

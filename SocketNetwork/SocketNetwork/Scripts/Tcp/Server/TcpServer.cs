@@ -129,12 +129,8 @@ namespace Network
         /// <param name="message"></param>
         public void Send(int uid, int cmdID, string message)
         {
-            foreach(var kv in _recevieDic)
-            {
-                Socket socket = kv.Key;
-                byte[] byteData = Encoding.ASCII.GetBytes(message);
-                Send(socket, uid, cmdID, byteData);
-            }
+            byte[] byteData = Encoding.ASCII.GetBytes(message);
+            Send(uid, cmdID, byteData);
         }
 
         public void Send(int uid, int cmdID, byte[] byteData)
@@ -146,21 +142,10 @@ namespace Network
             }
         }
 
-        private void Send(Socket handler, int uid, int cmdID, byte[] byteData)
+        private void Send(Socket handler, int uid, int cmdID, byte[] bytes)
         {
-            byte[] uidBytes = BitConverter.GetBytes(uid);
-            byte[] cmdBytes = BitConverter.GetBytes(cmdID);
-            int length = uidBytes.Length + cmdBytes.Length + byteData.Length;  // uid + cmd + 内容
-            byte[] lengthBytes = BitConverter.GetBytes(length);
-
-            ByteBuffer byteBuffer = new ByteBuffer((lengthBytes.Length + length));
-            byteBuffer.WriteInt(length);
-            byteBuffer.WriteBytes(uidBytes);
-            byteBuffer.WriteBytes(cmdBytes);
-            byteBuffer.WriteBytes(byteData);
-            byte[] sendBytes = byteBuffer.GetData();
-
-            handler.BeginSend(sendBytes, 0, sendBytes.Length, SocketFlags.None, new AsyncCallback(SendCallBack), handler);
+            byte[] bytesData = SendData.ToByte(uid, cmdID, bytes);
+            handler.BeginSend(bytesData, 0, bytesData.Length, SocketFlags.None, new AsyncCallback(SendCallBack), handler);
         }
 
         private void SendCallBack(IAsyncResult ar)
@@ -181,9 +166,11 @@ namespace Network
         private void ReceiveComplete(int uid, int cmdID, byte[] byteData)
         {
             string content = Encoding.ASCII.GetString(byteData);
+            if (null != NetworkController.receiveMessage)
+            {
+                NetworkController.receiveMessage(uid, cmdID, content);
+            }
             Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   content : " + content);
-
-            Send(uid, cmdID, content);
         }
     }
 
