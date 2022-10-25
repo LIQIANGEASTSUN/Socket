@@ -6,19 +6,12 @@ using System.Threading.Tasks;
 
 namespace Network
 {
-    class UdpReceive
+    public class UdpReceive
     {
-        private byte[] byteBuffer;
-        private int _offset = 0;
-
-        private const int headBit = 4;
-        private const int uidBit = 4;
-        private const int cmdBit = 4;
-
+        private const int intLength = 4;
         private Action<int, int, byte[]> _callBack;
         public UdpReceive()
         {
-            byteBuffer = new byte[StateObject.bufferSize];
         }
 
         public void SetCompleteCallBack(Action<int, int, byte[]> callBacka)
@@ -28,24 +21,89 @@ namespace Network
 
         public void ReceiveMessage(byte[] bytesData)
         {
-            CompleteBuff(bytesData);
+            int messageNumber = BitConverter.ToInt32(bytesData, 0);
+            int packageCount = BitConverter.ToInt32(bytesData, intLength);
+            int pcakageIndex = BitConverter.ToInt32(bytesData, intLength * 2);
+            int bytesLength = BitConverter.ToInt32(bytesData, intLength * 3);
+            int uid = BitConverter.ToInt32(bytesData, intLength * 4);
+            int cmdID = BitConverter.ToInt32(bytesData, intLength * 5);
+
+            byte[] dataBytes = new byte[bytesLength];
+            Array.Copy(bytesData, intLength * 6, dataBytes, 0, bytesLength);
+
+
         }
 
         private void CompleteBuff(byte[] bytes)
         {
-            int headLength = BitConverter.ToInt32(bytes, 0);
-            int uid = BitConverter.ToInt32(bytes, headBit);
-            int cmdID = BitConverter.ToInt32(bytes, headBit + uidBit);
 
-            byte[] byteData = new byte[headLength - uidBit - cmdBit];
-            Array.Copy(bytes, headBit + uidBit + cmdBit, byteData, 0, byteData.Length);
-            string content = Encoding.ASCII.GetString(byteData);
+        }
+    }
 
-            if (null != _callBack)
+    public class UdpReceiveDataController
+    {
+        private List<ReceiveData> receiveList = new List<ReceiveData>();
+
+        public void Receive(int messageNumber, int packageCount, int pcakageIndex, int bytesLength, int uid, int cmdID, byte[] dataBytes)
+        {
+            if (receiveList.Count <= 0)
             {
-                _callBack(uid, cmdID, byteData);
+
             }
         }
 
+        private int InsertIndex(List<ReceiveData> list, int value)
+        {
+            int left = 0;
+            int right = list.Count - 1;
+            int index = 0;
+            while (left <= right)
+            {
+                int mid = (left + right) / 2;
+                if (list[mid]._messageNumber > value)
+                {
+                    right = mid - 1;
+                }
+                else if (list[mid]._messageNumber == value)
+                {
+                    index = mid;
+                    break;
+                }
+                else
+                {
+                    left = mid + 1;
+                }
+            }
+
+            return index;
+        }
+
     }
+
+    public class ReceiveData
+    {
+        public int _messageNumber;
+        public int _uid;
+        public int _cmdId;
+        public int _packageCount;
+        public Dictionary<int, byte[]> _dataDic = new Dictionary<int, byte[]>();
+
+        public ReceiveData(int messageNumber, int uid, int cmdId, int packageCount)
+        {
+            _messageNumber = messageNumber;
+            _uid = uid;
+            _cmdId = cmdId;
+        }
+
+        public bool Add(int index, byte[] data)
+        {
+            if (_dataDic.ContainsKey(index))
+            {
+                return false;
+            }
+            _dataDic[index] = data;
+            return _dataDic.Count == _packageCount;
+        }
+    }
+
 }

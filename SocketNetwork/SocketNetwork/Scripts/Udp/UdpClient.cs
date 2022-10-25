@@ -62,10 +62,13 @@ namespace Network
         /// <param name="bytes"></param>
         public void Send(int uid, int cmdID, string ip, int port, byte[] bytes)
         {
+            SendData.ToUdpByte(uid, cmdID, ip, port, bytes, SendByte);
+        }
+
+        private void SendByte(string ip, int port, byte[] bytes)
+        {
             try
             {
-                byte[] bytesData = SendData.ToByte(uid, cmdID, bytes);
-
                 StateUdpObject stateObject = new StateUdpObject();
                 stateObject.workSocket = _socket;
 
@@ -73,7 +76,7 @@ namespace Network
                 IPEndPoint remote = new IPEndPoint(ipAddress, port);
 
                 // 异步发送数据到指定套接字所代表的网络设备
-                _socket.BeginSendTo(bytesData, 0, bytesData.Length, SocketFlags.None, remote, SendCallBack, stateObject);
+                _socket.BeginSendTo(bytes, 0, bytes.Length, SocketFlags.None, remote, SendCallBack, stateObject);
             }
             catch (Exception ex)
             {

@@ -149,7 +149,7 @@ namespace Network
 
         private void Send(Socket handler, int uid, int cmdID, byte[] bytes)
         {
-            byte[] bytesData = SendData.ToByte(uid, cmdID, bytes);
+            byte[] bytesData = SendData.ToTcpByte(uid, cmdID, bytes);
             handler.BeginSend(bytesData, 0, bytesData.Length, SocketFlags.None, new AsyncCallback(SendCallBack), handler);
         }
 

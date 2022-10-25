@@ -131,7 +131,7 @@ namespace Network
         {
             try
             {
-                byte[] bytesData = SendData.ToByte(uid, cmdID, bytes);
+                byte[] bytesData = SendData.ToTcpByte(uid, cmdID, bytes);
                 StateObject stateObject = new StateObject();
                 stateObject.workSocket = clientSocket;
                 // 异步发送数据到指定套接字所代表的网络设备
