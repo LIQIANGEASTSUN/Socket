@@ -16,6 +16,8 @@ namespace Network
         private ManualResetEvent receiveDone = new ManualResetEvent(false);
 
         private TcpReceive _tcpReceive;
+        private NetWorkState _netWorkState;
+
         public TcpClient()
         {
             _tcpReceive = new TcpReceive();
@@ -39,7 +41,6 @@ namespace Network
                 // 用于暂停主线程的执行，并在可以继续执行时发出信号
                 //connectDone.WaitOne();
 
-                Receive(clientSocket);
                 //receiveDone.WaitOne();
             }
             catch (Exception ex)
@@ -55,15 +56,22 @@ namespace Network
             {
                 StateObject state = (StateObject)ar.AsyncState;
                 Socket socket = state.workSocket;
-                socket.EndConnect(ar);
-                Debug.Log("连接服务器成功:" + socket.RemoteEndPoint.ToString());
+                if (socket.Connected)
+                {
+                    ChangeState(NetWorkState.Connected);
+                    socket.EndConnect(ar);
+                    Debug.Log("连接服务器成功:" + socket.RemoteEndPoint.ToString());
 
-                // 当远程设备可用时，它连接到远程设备，然后通过设置ManualResetEvent 向应用程序线程发送连接已完成的信号connectDone
-                // Signal that the connection has been made.
-                //connectDone.Set();
+                    // 当远程设备可用时，它连接到远程设备，然后通过设置ManualResetEvent 向应用程序线程发送连接已完成的信号connectDone
+                    // Signal that the connection has been made.
+                    //connectDone.Set();
+
+                    Receive(clientSocket);
+                }
             }
             catch (Exception ex)
             {
+                ChangeState(NetWorkState.ConnectFailed);
                 Debug.Log(ex.Message);
             }
         }
@@ -84,8 +92,6 @@ namespace Network
             catch (Exception ex)
             {
                 Debug.Log(ex.Message);
-                clientSocket.Shutdown(SocketShutdown.Both);
-                clientSocket.Close();
             }
         }
 
@@ -166,6 +172,9 @@ namespace Network
 
         public void Dispose()
         {
+            ChangeState(NetWorkState.Closed);
+            _tcpReceive.Clear();
+
             try
             {
                 clientSocket.Shutdown(SocketShutdown.Both);
@@ -177,6 +186,7 @@ namespace Network
             {
                 Debug.Log(ex.Message);
             }
+
         }
 
         private void ReceiveComplete(int uid, int cmdID, byte[] byteData)
@@ -187,6 +197,11 @@ namespace Network
                 NetworkController.receiveMessage(uid, cmdID, content);
             }
             Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   content : " + content);
+        }
+
+        private void ChangeState(NetWorkState netWorkState)
+        {
+            _netWorkState = netWorkState;
         }
     }
 }

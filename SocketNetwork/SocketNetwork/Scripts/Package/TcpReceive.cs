@@ -20,6 +20,12 @@ namespace Network
             byteBuffer = new byte[StateObject.bufferSize];
         }
 
+        public void Clear()
+        {
+            byteBuffer = new byte[StateObject.bufferSize];
+            _offset = 0;
+        }
+
         public void SetCompleteCallBack(Action<int, int, byte[]> callBacka)
         {
             _callBack = callBacka;
@@ -68,7 +74,6 @@ namespace Network
 
             byte[] byteData = new byte[headLength - uidBit - cmdBit];
             Array.Copy(bytes, headBit + uidBit + cmdBit, byteData, 0, byteData.Length);
-            string content = Encoding.ASCII.GetString(byteData);
 
             if (null != _callBack)
             {
