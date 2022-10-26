@@ -19,7 +19,7 @@ namespace Network
         private Action<int, int, byte[]> _callBack;
         public TcpReceive()
         {
-            byteBuffer = new byte[StateObject.bufferSize];
+            byteBuffer = new byte[StateObject.bufferSize * 2];
         }
 
         public void Clear()
@@ -113,85 +113,6 @@ namespace Network
             return bytes;
         }
 
-        //public void ReceiveMessage(int count, byte[] bytesData)
-        //{
-        //    int end = _start + count;
-        //    _end = end % byteBuffer.Length;
-
-        //    if (end < byteBuffer.Length)
-        //    {
-        //        Array.Copy(bytesData, 0, byteBuffer, _start, count);
-        //    }
-        //    else
-        //    {
-        //        int oneCopyCount = count - _start;
-        //        Array.Copy(bytesData, 0, byteBuffer, _start, oneCopyCount);
-
-        //        int twoCopyCount = count - oneCopyCount;
-        //        Array.Copy(bytesData, oneCopyCount, byteBuffer, 0, twoCopyCount);
-        //    }
-
-        //    int byteCount = ByteCount();
-        //    while (byteCount >= lengthBit)
-        //    {
-        //        byte[] lengthByte = CopyByte(_start, 4);
-        //        int length = BitConverter.ToInt32(lengthByte, 0);
-
-        //        if (byteCount < length)
-        //        {
-        //            break;
-        //        }
-
-        //        byte[] msgBytes = CopyByte(_start, length);
-        //        CompleteBuff(msgBytes);
-
-        //        _start += length;
-        //        _start %= byteBuffer.Length;
-
-        //        byteCount = ByteCount();
-        //    }
-
-        //}
-
-        //private int ByteCount()
-        //{
-        //    int count = 0;
-        //    if (_end == _start)
-        //    {
-        //        return count;
-        //    }
-        //    if (_end > _start)
-        //    {
-        //        count = _end - _start;
-        //    }
-        //    else
-        //    {
-        //        count = byteBuffer.Length - _start + _end;
-        //    }
-        //    return count;
-        //}
-
-        //private byte[] CopyByte(int start, int count)
-        //{
-        //    byte[] bytes = new byte[count];
-
-        //    if (byteBuffer.Length > start + count)
-        //    {
-        //        Array.Copy(byteBuffer, start, bytes, 0, count);
-        //    }
-        //    else
-        //    {
-        //        int oneCopyCount = byteBuffer.Length - start;
-        //        Array.Copy(byteBuffer, start, bytes, 0, oneCopyCount);
-
-        //        int twoCopyCount = count = oneCopyCount;
-        //        Array.Copy(byteBuffer, 0, bytes, oneCopyCount, twoCopyCount);
-        //    }
-
-        //    return bytes;
-        //}
-
-
         //public void ReceiveMessage(byte[] bytesData)
         //{
         //    int readIndex = 0;
@@ -224,21 +145,6 @@ namespace Network
         //        _offset += readCount;
         //        CompleteBuff(byteBuffer);
         //        _offset = 0;
-        //    }
-        //}
-
-        //private void CompleteBuff(byte[] bytes)
-        //{
-        //    int headLength = BitConverter.ToInt32(bytes, 0);
-        //    int uid = BitConverter.ToInt32(bytes, headBit);
-        //    int cmdID = BitConverter.ToInt32(bytes, headBit + uidBit);
-
-        //    byte[] byteData = new byte[headLength - uidBit - cmdBit];
-        //    Array.Copy(bytes, headBit + uidBit + cmdBit, byteData, 0, byteData.Length);
-
-        //    if (null != _callBack)
-        //    {
-        //        _callBack(uid, cmdID, byteData);
         //    }
         //}
 
