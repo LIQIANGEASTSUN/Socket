@@ -39,8 +39,11 @@ namespace Network
             IPAddress ipAddress = IPAddress.Parse(_ip);
             IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, _port);
             _clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _clientSocket.SendTimeout = 2000;
-            _clientSocket.ReceiveTimeout = 2000;
+            _clientSocket.SendTimeout = 5000;
+            _clientSocket.ReceiveTimeout = 5000;
+            _clientSocket.SendBufferSize = StateObject.bufferSize;
+            _clientSocket.Blocking = false;
+            _clientSocket.NoDelay = true;
 
             try
             {
