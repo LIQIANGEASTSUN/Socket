@@ -151,7 +151,7 @@ namespace Network
                 int bytesRead = client.EndReceive(ar);
                 if (bytesRead > 0)
                 {
-                    _tcpReceive.ReceiveMessage(state.buffer);
+                    _tcpReceive.ReceiveMessage(bytesRead, state.buffer);
                     Receive(client);
                 }
                 else
@@ -170,9 +170,9 @@ namespace Network
         /// 发送消息
         /// </summary>
         /// <param name="bytes"></param>
-        public void Send(int seqld, int cmdID, byte[] bytes)
+        public void Send(int messageId, int seqld, byte[] bytes)
         {
-            if(!CheckConnectState())
+            if (!CheckConnectState())
             {
                 ReConnect();
                 return;
@@ -180,7 +180,7 @@ namespace Network
 
             try
             {
-                byte[] bytesData = SendData.ToTcpByte(uid, cmdID, bytes);
+                byte[] bytesData = SendData.ToTcpByte(messageId, seqld, bytes);
                 StateObject stateObject = new StateObject();
                 stateObject.workSocket = _clientSocket;
                 // 异步发送数据到指定套接字所代表的网络设备
@@ -272,10 +272,6 @@ namespace Network
         private void ReceiveComplete(int uid, int cmdID, byte[] byteData)
         {
             string content = Encoding.ASCII.GetString(byteData);
-            if (null != NetworkController.receiveMessage)
-            {
-                NetworkController.receiveMessage(uid, cmdID, content);
-            }
             Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   content : " + content);
         }
 

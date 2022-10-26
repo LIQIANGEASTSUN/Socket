@@ -97,7 +97,7 @@
             this.RemoteIPBox.Name = "RemoteIPBox";
             this.RemoteIPBox.Size = new System.Drawing.Size(127, 21);
             this.RemoteIPBox.TabIndex = 3;
-            this.RemoteIPBox.Text = "10.0.116.245";
+            this.RemoteIPBox.Text = "127.0.0.1";
             // 
             // RemotePort
             // 
@@ -114,7 +114,7 @@
             this.RemotePortText.Name = "RemotePortText";
             this.RemotePortText.Size = new System.Drawing.Size(127, 21);
             this.RemotePortText.TabIndex = 5;
-            this.RemotePortText.Text = "8000";
+            this.RemotePortText.Text = "8002";
             // 
             // SendInputBox
             // 

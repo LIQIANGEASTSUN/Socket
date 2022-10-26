@@ -114,7 +114,7 @@ namespace Network
                 if (read > 0)
                 {
                     TcpReceive tcpRecieve = _recevieDic[handler];
-                    tcpRecieve.ReceiveMessage(state.buffer);
+                    tcpRecieve.ReceiveMessage(read, state.buffer);
                     ReceiveMessage(handler);
                 }
                 else
