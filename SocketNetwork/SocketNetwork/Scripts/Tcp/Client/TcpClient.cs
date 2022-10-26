@@ -31,6 +31,8 @@ namespace Network
         {
             _ip = ip;
             _port = port;
+            SetConnectCount(0);
+
             StartConnect();
         }
 
@@ -42,6 +44,7 @@ namespace Network
             _clientSocket.SendTimeout = 5000;
             _clientSocket.ReceiveTimeout = 5000;
             _clientSocket.SendBufferSize = StateObject.bufferSize;
+            _clientSocket.ReceiveBufferSize = StateObject.bufferSize;
             _clientSocket.Blocking = false;
             _clientSocket.NoDelay = true;
 
@@ -58,9 +61,9 @@ namespace Network
                 //connectDone.WaitOne();
                 //receiveDone.WaitOne();
             }
-            catch (Exception ex)
+            catch (SocketException se)
             {
-                //Debug.Log("连接服务器失败，请回车退出:" + ex.Message);
+                NotifyException(se.StackTrace, se.Message, se.ErrorCode);
                 ChangeState(NetWorkState.ConnectFailed);
             }
         }
@@ -89,19 +92,26 @@ namespace Network
                     ChangeState(NetWorkState.ConnectFailed);
                 }
             }
-            catch (Exception ex)
+            catch (SocketException se)
             {
+                NotifyException(se.StackTrace, se.Message, se.ErrorCode);
                 ChangeState(NetWorkState.ConnectFailed);
-                Debug.Log(ex.Message);
             }
         }
 
         private void ReConnect()
         {
+            if (_netWorkState == NetWorkState.Connecting)
+            {
+                // 正在连接中
+                return;
+            }
+
             if (_reConnectCount < Max_ReConnect_Count)
             {
-                ++_reConnectCount;
+                SetConnectCount(_reConnectCount + 1);
                 Dispose();
+                ChangeState(NetWorkState.Connecting);
                 StartConnect();
             }
             else
@@ -123,9 +133,9 @@ namespace Network
                 // Begin receiving the data from the remote device.  
                 state.workSocket.BeginReceive(state.buffer, 0, StateObject.bufferSize, SocketFlags.None, new AsyncCallback(ReceiveCallBack), state);
             }
-            catch (Exception ex)
+            catch (SocketException se)
             {
-                Debug.Log(ex.Message);
+                NotifyException(se.StackTrace, se.Message, se.ErrorCode);
                 ChangeState(NetWorkState.ConnectFailed);
             }
         }
@@ -151,22 +161,16 @@ namespace Network
             }
             catch (SocketException se)
             {
-                Debug.Log(se.Message);
+                NotifyException(se.StackTrace, se.Message, se.ErrorCode);
                 ChangeState(NetWorkState.ConnectFailed);
             }
         }
-
-        //public void SendStr(int uid, int cmdID, string msg)
-        //{
-        //    byte[] bytes = Encoding.Default.GetBytes(msg);
-        //    Send(uid, cmdID, bytes);
-        //}
 
         /// <summary>
         /// 发送消息
         /// </summary>
         /// <param name="bytes"></param>
-        public void Send(int uid, int cmdID, byte[] bytes)
+        public void Send(int seqld, int cmdID, byte[] bytes)
         {
             if(!CheckConnectState())
             {
@@ -182,9 +186,9 @@ namespace Network
                 // 异步发送数据到指定套接字所代表的网络设备
                 stateObject.workSocket.BeginSend(bytesData, 0, bytesData.Length, SocketFlags.None, SendCallBack, stateObject);
             }
-            catch (Exception ex)
+            catch (SocketException se)
             {
-                Debug.Log(ex.Message);
+                NotifyException(se.StackTrace, se.Message, se.ErrorCode);
                 ChangeState(NetWorkState.ConnectFailed);
             }
         }
@@ -199,14 +203,14 @@ namespace Network
             {
                 StateObject state = (StateObject)ar.AsyncState;
                 Socket socket = state.workSocket;
-                socket.EndSend(ar);
+                int send = socket.EndSend(ar);
 
                 // Siganl that all bytes have been set
-                sendDone.Set();
+                // sendDone.Set();
             }
             catch (SocketException se)
             {
-                Debug.Log(se.Message);
+                NotifyException(se.StackTrace, se.Message, se.ErrorCode);
                 ChangeState(NetWorkState.ConnectFailed);
             }
         }
@@ -227,9 +231,9 @@ namespace Network
                 _clientSocket.Close();
                 _clientSocket = null;
             }
-            catch (Exception ex)
+            catch (SocketException se)
             {
-                Debug.Log(ex.Message);
+                NotifyException(se.StackTrace, se.Message, se.ErrorCode);
             }
         }
 
@@ -249,11 +253,20 @@ namespace Network
             {
                 ReConnect();
             }
-            else if (_netWorkState == NetWorkState.Connected
-                || _netWorkState == NetWorkState.Closed)
+            else if (_netWorkState == NetWorkState.Connected)
             {
-                _reConnectCount = 0;
+                SetConnectCount(0);
             }
+        }
+
+        private void SetConnectCount(int count)
+        {
+            _reConnectCount = count;
+        }
+
+        private void NotifyException(string stackTrace, string msssage, int errorCode)
+        {
+
         }
 
         private void ReceiveComplete(int uid, int cmdID, byte[] byteData)

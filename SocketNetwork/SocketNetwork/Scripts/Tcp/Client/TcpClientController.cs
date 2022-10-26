@@ -29,7 +29,8 @@ namespace Network
 
         public void Send(string msg)
         {
-            _tcpClient.Send(_networkData.uid, _networkData.cmdID, msg);
+            byte[] byteData = Encoding.ASCII.GetBytes(msg);
+            _tcpClient.Send(_networkData.uid, _networkData.cmdID, byteData);
         }
 
         private void Input()
@@ -43,7 +44,9 @@ namespace Network
             Console.WriteLine("请输入消息内容");
             string msg = Console.ReadLine();
 
-            _tcpClient.Send(int.Parse(uid), int.Parse(cmdID), msg);
+            byte[] byteData = Encoding.ASCII.GetBytes(msg);
+
+            _tcpClient.Send(int.Parse(uid), int.Parse(cmdID), byteData);
         }
     }
 
