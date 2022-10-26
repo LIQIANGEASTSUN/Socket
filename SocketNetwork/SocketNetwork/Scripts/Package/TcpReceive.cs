@@ -10,7 +10,6 @@ namespace Network
         private byte[] byteBuffer;
         private int _start = 0;
         private int _residue;
-        private int _end = 0;
 
         private const int lengthBit = 4;
         private const int messageIdBit = 4;
@@ -19,16 +18,21 @@ namespace Network
         private Action<int, int, byte[]> _callBack;
         public TcpReceive()
         {
-            byteBuffer = new byte[StateObject.bufferSize * 2];
+            Init();
         }
 
         public void Clear()
         {
-            byteBuffer = new byte[StateObject.bufferSize];
-            _start = 0;
-            _end = 0;
-            _residue = 0;
+            Init();
         }
+
+        private void Init()
+        {
+            _start = 0;
+            _residue = 0;
+            byteBuffer = new byte[StateObject.bufferSize * 2];
+        }
+
 
         public void SetCompleteCallBack(Action<int, int, byte[]> callBacka)
         {

@@ -10,7 +10,7 @@ namespace Network
     public class StateObject
     {
         public Socket workSocket;
-        public const int bufferSize = 1024 * 10;
+        public const int bufferSize = 1024 * 5;
         public byte[] buffer = new byte[bufferSize];
     }
     public class StateUdpObject : StateObject
