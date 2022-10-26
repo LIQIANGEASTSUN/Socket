@@ -30,9 +30,12 @@ namespace Network
         {
             _start = 0;
             _residue = 0;
+
+            // 因为字节在 byteBuffer 是循环存储的
+            // 确保 byteBuffer 缓存的数组长度 >= StateObject.bufferSize * 2
+            // 否则会出现收尾相连
             byteBuffer = new byte[StateObject.bufferSize * 2];
         }
-
 
         public void SetCompleteCallBack(Action<int, int, byte[]> callBacka)
         {
@@ -54,12 +57,15 @@ namespace Network
             int index = 0;
             while (count > 0)
             {
-                if (byteBuffer.Length == offset)
+                int write = 0;
+                if (_start < offset)
                 {
-                    offset = 0;
+                    write = byteBuffer.Length - offset + _start;
                 }
-
-                int write = Math.Max(0, byteBuffer.Length - offset);
+                else
+                {
+                    write = _start - offset;
+                }
                 write = Math.Min(write, count);
 
                 Array.Copy(bytesData, index, byteBuffer, offset, write);
