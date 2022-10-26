@@ -37,7 +37,14 @@ namespace Network
 
         public void ReceiveMessage(int count, byte[] bytesData)
         {
+            WriteByte(count, bytesData);
+            Analyse();
+        }
+
+        private void WriteByte(int count, byte[] bytesData)
+        {
             int offset = _start + _residue;
+            offset %= byteBuffer.Length;
             _residue += count;
 
             int index = 0;
@@ -48,7 +55,7 @@ namespace Network
                     offset = 0;
                 }
 
-                int write = byteBuffer.Length - offset;
+                int write = Math.Max(0, byteBuffer.Length - offset);
                 write = Math.Min(write, count);
 
                 Array.Copy(bytesData, index, byteBuffer, offset, write);
@@ -58,7 +65,10 @@ namespace Network
                 offset += write;
                 offset %= byteBuffer.Length;
             }
+        }
 
+        private void Analyse()
+        {
             while (_residue >= lengthBit)
             {
                 byte[] lengthByte = CopyByte(_start, 4);
@@ -83,17 +93,21 @@ namespace Network
         {
             byte[] bytes = new byte[count];
 
-            if (byteBuffer.Length > start + count)
+            int index = 0;
+            while (count > 0)
             {
-                Array.Copy(byteBuffer, start, bytes, 0, count);
-            }
-            else
-            {
-                int oneCopyCount = byteBuffer.Length - start;
-                Array.Copy(byteBuffer, start, bytes, 0, oneCopyCount);
+                if (start >= byteBuffer.Length)
+                {
+                    start = 0;
+                }
+                int copy = byteBuffer.Length - start;
+                copy = Math.Min(copy, count);
 
-                int twoCopyCount = count = oneCopyCount;
-                Array.Copy(byteBuffer, 0, bytes, oneCopyCount, twoCopyCount);
+                Array.Copy(byteBuffer, start, bytes, index, copy);
+
+                count -= copy;
+                index += copy;
+                start += copy;
             }
 
             return bytes;

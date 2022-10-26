@@ -29,7 +29,8 @@ namespace Network
             byte[] msgIdBytes = BitConverter.GetBytes(messageId);
             byte[] seqIdBytes = BitConverter.GetBytes(seqId);
 
-            int length = msgIdBytes.Length + seqIdBytes.Length + 4 + bytesData.Length;  // uid + cmd + 内容
+            int length = msgIdBytes.Length + seqIdBytes.Length + bytesData.Length;  // uid + cmd + 内容
+            length += 4;
             byte[] lengthBytes = BitConverter.GetBytes(length);
 
             byte[] sendBytes = new byte[length];
@@ -40,16 +41,6 @@ namespace Network
             Copy(bytesData, sendBytes, bytesData.Length, ref index);
 
             return sendBytes;
-        }
-        #endregion
-
-        #region Udp
-        private static int _messageNumber;
-        private static object _lockObj = new object();
-        public static byte[] ToUdpByte(int uid, int cmdID, string msg)
-        {
-            byte[] bytes = Encoding.Default.GetBytes(msg);
-            return ToTcpByte(uid, cmdID, bytes);
         }
         #endregion
 
