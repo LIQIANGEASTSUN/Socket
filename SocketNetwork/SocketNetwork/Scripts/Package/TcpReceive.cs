@@ -14,6 +14,7 @@ namespace Network
         private const int lengthBit = 4;
         private const int messageIdBit = 4;
         private const int seqIdBit = 4;
+        private const int headBit = 12;
 
         private Action<int, int, byte[]> _callBack;
         public TcpReceive()
@@ -30,10 +31,6 @@ namespace Network
         {
             _start = 0;
             _residue = 0;
-
-            // 因为字节在 byteBuffer 是循环存储的
-            // 确保 byteBuffer 缓存的数组长度 >= StateObject.bufferSize * 2
-            // 否则会出现收尾相连
             byteBuffer = new byte[StateObject.bufferSize * 2];
         }
 
@@ -58,9 +55,10 @@ namespace Network
             while (count > 0)
             {
                 int write = 0;
-                if (_start < offset)
+                if (_start <= offset)
                 {
-                    write = byteBuffer.Length - offset + _start;
+                    // offset 位置到 byteBuffer.Length
+                    write = byteBuffer.Length - offset;
                 }
                 else
                 {
@@ -81,16 +79,19 @@ namespace Network
         {
             while (_residue >= lengthBit)
             {
-                byte[] lengthByte = CopyByte(_start, 4);
-                int length = BitConverter.ToInt32(lengthByte, 0);
+                int newStart = _start;
+                byte[] lengthByte = CopyByte(_start, 4, ref newStart);
+                int length = IPAddressTool.NetworkToHostOrderInt32(lengthByte);
 
                 if (_residue < length)
                 {
                     break;
                 }
 
-                byte[] msgBytes = CopyByte(_start, length);
-                CompleteBuff(msgBytes);
+                byte[] messageByte = CopyByte(newStart, 4, ref newStart);
+                byte[] seqIdByte = CopyByte(newStart, 4, ref newStart);
+                byte[] msgBytes = CopyByte(newStart, length - headBit);
+                CompleteBuff(messageByte, seqIdByte, msgBytes);
 
                 _start += length;
                 _start %= byteBuffer.Length;
@@ -99,17 +100,21 @@ namespace Network
             }
         }
 
+
         private byte[] CopyByte(int start, int count)
+        {
+            int newStart = start;
+            return CopyByte(start, count, ref newStart);
+        }
+
+        private byte[] CopyByte(int start, int count, ref int newStart)
         {
             byte[] bytes = new byte[count];
 
+            start %= byteBuffer.Length;
             int index = 0;
             while (count > 0)
             {
-                if (start >= byteBuffer.Length)
-                {
-                    start = 0;
-                }
                 int copy = byteBuffer.Length - start;
                 copy = Math.Min(copy, count);
 
@@ -118,8 +123,10 @@ namespace Network
                 count -= copy;
                 index += copy;
                 start += copy;
+                start %= byteBuffer.Length;
             }
 
+            newStart = start;
             return bytes;
         }
 
@@ -158,20 +165,34 @@ namespace Network
         //    }
         //}
 
-        private void CompleteBuff(byte[] bytes)
+        private void CompleteBuff(byte[] messageByte, byte[] seqIdByte, byte[] msgBytes)
         {
-            int length = BitConverter.ToInt32(bytes, 0);
-            int messageId = BitConverter.ToInt32(bytes, lengthBit);
-            int seqId = BitConverter.ToInt32(bytes, lengthBit + messageIdBit);
-
-            byte[] byteData = new byte[length - lengthBit - messageIdBit - seqIdBit];
-            Array.Copy(bytes, lengthBit + messageIdBit + seqIdBit, byteData, 0, byteData.Length);
+            int messageId = IPAddressTool.NetworkToHostOrderInt32(messageByte);
+            int seqId = IPAddressTool.NetworkToHostOrderInt32(seqIdByte);
 
             if (null != _callBack)
             {
-                _callBack(messageId, seqId, byteData);
+                _callBack(messageId, seqId, msgBytes);
             }
         }
 
+        //private void CompleteBuff(byte[] bytes)
+        //{
+        //    int length = BitConverter.ToInt32(bytes, 0);
+        //    int messageId = BitConverter.ToInt32(bytes, lengthBit);
+        //    int seqId = BitConverter.ToInt32(bytes, lengthBit + messageIdBit);
+
+        //    byte[] byteData = new byte[length - lengthBit - messageIdBit - seqIdBit];
+        //    Array.Copy(bytes, lengthBit + messageIdBit + seqIdBit, byteData, 0, byteData.Length);
+
+        //    if (null != _callBack)
+        //    {
+        //        _callBack(messageId, seqId, byteData);
+        //    }
+        //}
+
     }
 }
+
+
+

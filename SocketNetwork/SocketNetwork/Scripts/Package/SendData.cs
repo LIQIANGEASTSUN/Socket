@@ -1,20 +1,73 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Network
 {
+
+    public class IPAddressTool
+    {
+        public static int HostToNetworkOrderInt32(int value)
+        {
+            if (BitConverter.IsLittleEndian)
+            {
+                return IPAddress.HostToNetworkOrder(value);
+            }
+            return value;
+        }
+
+        public static int HostToNetworkOrderInt64(int value)
+        {
+            if (BitConverter.IsLittleEndian)
+            {
+                return IPAddress.HostToNetworkOrder(value);
+            }
+            return value;
+        }
+
+        public static int NetworkToHostOrderInt32(int value)
+        {
+            if (BitConverter.IsLittleEndian)
+            {
+                return IPAddress.NetworkToHostOrder(value);
+            }
+            return value;
+        }
+
+        public static Int64 NetworkToHostOrderInt64(Int64 value)
+        {
+            if (BitConverter.IsLittleEndian)
+            {
+                return IPAddress.NetworkToHostOrder(value);
+            }
+            return value;
+        }
+
+        public static byte[] HostToNetworkOrderByte(int value)
+        {
+            value = HostToNetworkOrderInt32(value);
+            return BitConverter.GetBytes(value);
+        }
+
+        public static int NetworkToHostOrderInt32(byte[] byteData)
+        {
+            int value = BitConverter.ToInt32(byteData, 0);
+            return NetworkToHostOrderInt32(value);
+        }
+
+        public static Int64 NetworkToHostOrderInt64(byte[] byteData)
+        {
+            Int64 value = BitConverter.ToInt64(byteData, 0);
+            return NetworkToHostOrderInt64(value);
+        }
+    }
+
     class SendData
     {
         #region Tcp
-        public static byte[] ToTcpByte(int uid, int cmdID, string msg)
-        {
-            byte[] bytes = Encoding.Default.GetBytes(msg);
-            return ToTcpByte(uid, cmdID, bytes);
-        }
-
         /// <summary>
         /// 发送的Tcp消息
         /// length = uid字节长度 + cmdID 字节长度 + bytesData字节长度
@@ -26,12 +79,12 @@ namespace Network
         /// <returns></returns>
         public static byte[] ToTcpByte(int messageId, int seqId, byte[] bytesData)
         {
-            byte[] msgIdBytes = BitConverter.GetBytes(messageId);
-            byte[] seqIdBytes = BitConverter.GetBytes(seqId);
+            byte[] msgIdBytes = IPAddressTool.HostToNetworkOrderByte(messageId);
+            byte[] seqIdBytes = IPAddressTool.HostToNetworkOrderByte(seqId);
 
             int length = msgIdBytes.Length + seqIdBytes.Length + bytesData.Length;  // uid + cmd + 内容
             length += 4;
-            byte[] lengthBytes = BitConverter.GetBytes(length);
+            byte[] lengthBytes = IPAddressTool.HostToNetworkOrderByte(length);
 
             byte[] sendBytes = new byte[length];
             long index = 0;
