@@ -22,16 +22,25 @@ namespace Network
         public void ReceiveMessage(byte[] bytesData)
         {
             int messageNumber = BitConverter.ToInt32(bytesData, 0);
+            messageNumber = IPAddressTool.NetworkToHostOrderInt32(messageNumber);
+
             int packageCount = BitConverter.ToInt32(bytesData, intLength);
+            packageCount = IPAddressTool.NetworkToHostOrderInt32(packageCount);
+
             int pcakageIndex = BitConverter.ToInt32(bytesData, intLength * 2);
+            pcakageIndex = IPAddressTool.NetworkToHostOrderInt32(pcakageIndex);
+
             int bytesLength = BitConverter.ToInt32(bytesData, intLength * 3);
+            bytesLength = IPAddressTool.NetworkToHostOrderInt32(bytesLength);
+
             int uid = BitConverter.ToInt32(bytesData, intLength * 4);
+            uid = IPAddressTool.NetworkToHostOrderInt32(uid);
+
             int cmdID = BitConverter.ToInt32(bytesData, intLength * 5);
+            cmdID = IPAddressTool.NetworkToHostOrderInt32(cmdID);
 
             byte[] dataBytes = new byte[bytesLength];
             Array.Copy(bytesData, intLength * 6, dataBytes, 0, bytesLength);
-
-
         }
 
         private void CompleteBuff(byte[] bytes)
