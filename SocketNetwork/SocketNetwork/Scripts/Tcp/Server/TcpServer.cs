@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Threading;
 using System.Net;
@@ -17,6 +15,8 @@ namespace Network
 
         private Dictionary<Socket, TcpReceive> _recevieDic = new Dictionary<Socket, TcpReceive>();
         private Thread thread;
+
+        private int queueId = 1000;
 
         public TcpServer()
         {
@@ -135,21 +135,21 @@ namespace Network
         public void Send(int uid, int cmdID, string message)
         {
             byte[] byteData = Encoding.ASCII.GetBytes(message);
-            Send(uid, cmdID, byteData);
+            Send(uid, cmdID, queueId++, byteData);
         }
 
-        public void Send(int uid, int cmdID, byte[] byteData)
+        public void Send(int uid, int cmdID, int queueId, byte[] byteData)
         {
             foreach (var kv in _recevieDic)
             {
                 Socket socket = kv.Key;
-                Send(socket, uid, cmdID, byteData);
+                Send(socket, uid, cmdID, queueId, byteData);
             }
         }
 
-        private void Send(Socket handler, int uid, int cmdID, byte[] bytes)
+        private void Send(Socket handler, int uid, int cmdID, int queueId, byte[] bytes)
         {
-            byte[] bytesData = SendData.ToTcpByte(uid, cmdID, bytes);
+            byte[] bytesData = SendData.ToTcpByte(uid, cmdID, queueId, bytes);
             handler.BeginSend(bytesData, 0, bytesData.Length, SocketFlags.None, new AsyncCallback(SendCallBack), handler);
         }
 
@@ -168,14 +168,14 @@ namespace Network
             }
         }
 
-        private void ReceiveComplete(int uid, int cmdID, byte[] byteData)
+        private void ReceiveComplete(int uid, int cmdID, int queueId, byte[] byteData)
         {
             string content = Encoding.ASCII.GetString(byteData);
             if (null != NetworkController.receiveMessage)
             {
-                NetworkController.receiveMessage(uid, cmdID, content);
+                NetworkController.receiveMessage(uid, cmdID, queueId, content);
             }
-            Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   content : " + content);
+            Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   queueId:" + queueId + "   content : " + content);
         }
     }
 

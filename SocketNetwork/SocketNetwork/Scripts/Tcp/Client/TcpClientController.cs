@@ -30,7 +30,7 @@ namespace Network
         public void Send(string msg)
         {
             byte[] byteData = Encoding.ASCII.GetBytes(msg);
-            _tcpClient.Send(_networkData.uid, _networkData.cmdID, byteData);
+            _tcpClient.Send(_networkData.uid, _networkData.cmdID, _networkData.queueId++, byteData);
         }
 
         private void Input()
@@ -46,7 +46,7 @@ namespace Network
 
             byte[] byteData = Encoding.ASCII.GetBytes(msg);
 
-            _tcpClient.Send(int.Parse(uid), int.Parse(cmdID), byteData);
+            _tcpClient.Send(int.Parse(uid), int.Parse(cmdID), _networkData.queueId++, byteData);
         }
     }
 

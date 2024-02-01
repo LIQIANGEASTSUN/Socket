@@ -102,15 +102,14 @@ namespace Network
             }
         }
 
-        private void ReceiveComplete(int uid, int cmdID, byte[] byteData)
+        private void ReceiveComplete(int uid, int cmdID, int queueId, byte[] byteData)
         {
             string content = Encoding.ASCII.GetString(byteData);
             if (null != NetworkController.receiveMessage)
             {
-                NetworkController.receiveMessage(uid, cmdID, content);
+                NetworkController.receiveMessage(uid, cmdID, queueId, content);
             }
-            Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   content : " + content);
+            Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   queueId:" + queueId + "   content : " + content);
         }
-
     }
 }

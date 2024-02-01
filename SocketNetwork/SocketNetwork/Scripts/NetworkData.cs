@@ -1,10 +1,4 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Network
 {
     public enum NetworkType
@@ -27,7 +21,8 @@ namespace Network
         public int localPort;
         public string remoteIp;
         public int remotePort;
-        public int uid;
-        public int cmdID;
+        public int uid;       // 玩家ID
+        public int cmdID;     // 消息号
+        public int queueId;   // 消息序号，记录发送的第几条
     }
 }

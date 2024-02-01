@@ -169,8 +169,11 @@ namespace Network
         /// <summary>
         /// 发送消息
         /// </summary>
-        /// <param name="bytes"></param>
-        public void Send(int messageId, int seqld, byte[] bytes)
+        /// <param name="uid">玩家uid</param>
+        /// <param name="cmdID">消息号</param>
+        /// <param name="queueId">消息序号</param>
+        /// <param name="bytes">发送字节</param>
+        public void Send(int uid, int cmdID, int queueId, byte[] bytes)
         {
             if (!CheckConnectState())
             {
@@ -180,7 +183,7 @@ namespace Network
 
             try
             {
-                byte[] bytesData = SendData.ToTcpByte(messageId, seqld, bytes);
+                byte[] bytesData = SendData.ToTcpByte(uid, cmdID, queueId, bytes);
                 StateObject stateObject = new StateObject();
                 stateObject.workSocket = _clientSocket;
                 // 异步发送数据到指定套接字所代表的网络设备
@@ -269,10 +272,10 @@ namespace Network
 
         }
 
-        private void ReceiveComplete(int uid, int cmdID, byte[] byteData)
+        private void ReceiveComplete(int uid, int cmdID, int queueId, byte[] byteData)
         {
             string content = Encoding.ASCII.GetString(byteData);
-            Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   content : " + content);
+            Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   queueId:" + queueId + "   content : " + content);
         }
 
     }

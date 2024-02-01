@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Network
 {
-
     public class IPAddressTool
     {
         public static int HostToNetworkOrderInt32(int value)
@@ -68,29 +63,31 @@ namespace Network
     class SendData
     {
         #region Tcp
+
         /// <summary>
-        /// 发送的Tcp消息
-        /// length = uid字节长度 + cmdID 字节长度 + bytesData字节长度
-        /// 发送消息内容为：length + uid + cmdID + bytesData
+        /// 发送的Tcp消息长度 length = SIZE_BIT + uid字节长度 + cmdID 字节长度 + queueId字节长度 + bytesData字节长度
+        /// 发送消息内容为：length字节 + uid字节 + cmdID字节 + queueId字节 + bytesData字节
         /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="cmdID"></param>
+        /// <param name="uid">玩家id</param>
+        /// <param name="cmdId">消息号id</param>
+        /// <param name="queueId">消息序号</param>
         /// <param name="bytesData"></param>
         /// <returns></returns>
-        public static byte[] ToTcpByte(int messageId, int seqId, byte[] bytesData)
+        public static byte[] ToTcpByte(int uid, int cmdId, int queueId, byte[] bytesData)
         {
-            byte[] msgIdBytes = IPAddressTool.HostToNetworkOrderByte(messageId);
-            byte[] seqIdBytes = IPAddressTool.HostToNetworkOrderByte(seqId);
+            byte[] uidBytes = IPAddressTool.HostToNetworkOrderByte(uid);
+            byte[] cmdIdBytes = IPAddressTool.HostToNetworkOrderByte(cmdId);
+            byte[] queueIdBytes = IPAddressTool.HostToNetworkOrderByte(queueId);
 
-            int length = msgIdBytes.Length + seqIdBytes.Length + bytesData.Length;  // uid + cmd + 内容
-            length += 4;
-            byte[] lengthBytes = IPAddressTool.HostToNetworkOrderByte(length);
+            int size = NetworkConstant.HEAD_BIT + bytesData.Length;
+            byte[] sizeBytes = IPAddressTool.HostToNetworkOrderByte(size);
 
-            byte[] sendBytes = new byte[length];
+            byte[] sendBytes = new byte[size];
             long index = 0;
-            Copy(lengthBytes, sendBytes, lengthBytes.Length, ref index);
-            Copy(msgIdBytes, sendBytes, msgIdBytes.Length, ref index);
-            Copy(seqIdBytes, sendBytes, seqIdBytes.Length, ref index);
+            Copy(sizeBytes, sendBytes, NetworkConstant.SIZE_BIT, ref index);
+            Copy(uidBytes, sendBytes, NetworkConstant.UID_BIT, ref index);
+            Copy(cmdIdBytes, sendBytes, NetworkConstant.CMDID_BIT, ref index);
+            Copy(queueIdBytes, sendBytes, NetworkConstant.QUEUEID_BIT, ref index);
             Copy(bytesData, sendBytes, bytesData.Length, ref index);
 
             return sendBytes;
@@ -99,14 +96,8 @@ namespace Network
 
         private static void Copy(Array sourceArray, Array destinationArray, long length, ref long destinationIndex)
         {
-            Copy(sourceArray, 0, destinationArray, length, ref destinationIndex);
-        }
-
-        private static void Copy(Array sourceArray, int sourceIndex, Array destinationArray, long length, ref long destinationIndex)
-        {
-            Array.Copy(sourceArray, sourceIndex, destinationArray, destinationIndex, length);
+            Array.Copy(sourceArray, 0, destinationArray, destinationIndex, length);
             destinationIndex += length;
         }
-
     }
 }

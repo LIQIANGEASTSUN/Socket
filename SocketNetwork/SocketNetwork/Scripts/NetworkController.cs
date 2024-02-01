@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Network
 {
-    public delegate void ReceiveMessage(int uid, int cmdId, string msg);
+    public delegate void ReceiveMessage(int uid, int cmdId, int queueId, string msg);
     class NetworkController
     {
         public static readonly NetworkController Instance = new NetworkController();
@@ -64,9 +64,9 @@ namespace Network
             }
         }
 
-        private void Receive(int uid, int cmdID, string msg)
+        private void Receive(int uid, int cmdID, int queueId, string msg)
         {
-            string str = string.Format("uid:{0}_cmdID_{1}_msg_{2}", uid, cmdID, msg);
+            string str = string.Format("uid:{0}_cmdID_{1}_queueId{2}_msg_{3}", uid, cmdID, queueId, msg);
             _receiveQueue.Enqueue(str);
             //ReceiveBox.Text = string.Format("msg_{0}", msg);
         }

@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Network
 {
     public class UdpReceive
     {
         private const int intLength = 4;
-        private Action<int, int, byte[]> _callBack;
+        private Action<int, int, int, byte[]> _callBack;
         public UdpReceive()
         {
         }
 
-        public void SetCompleteCallBack(Action<int, int, byte[]> callBacka)
+        public void SetCompleteCallBack(Action<int, int, int, byte[]> callBacka)
         {
             _callBack = callBacka;
         }
