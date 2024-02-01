@@ -30,8 +30,8 @@ namespace Network
 
         public void ReceiveMessage(int count, byte[] bytesData)
         {
-            Array.Copy(bytesData, 0, byteBuffer, _byteCount, bytesData.Length);
-            _byteCount += bytesData.Length;
+            Array.Copy(bytesData, 0, byteBuffer, _byteCount, count);
+            _byteCount += count;
 
             Analyse();
         }

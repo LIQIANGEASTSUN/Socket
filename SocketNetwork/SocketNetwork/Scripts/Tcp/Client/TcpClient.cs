@@ -274,7 +274,7 @@ namespace Network
 
         private void ReceiveComplete(int uid, int cmdID, int queueId, byte[] byteData)
         {
-            string content = Encoding.ASCII.GetString(byteData);
+            string content = Encoding.Default.GetString(byteData);
             Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   queueId:" + queueId + "   content : " + content);
         }
 

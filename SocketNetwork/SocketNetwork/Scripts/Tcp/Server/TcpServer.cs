@@ -134,7 +134,7 @@ namespace Network
         /// <param name="message"></param>
         public void Send(int uid, int cmdID, string message)
         {
-            byte[] byteData = Encoding.ASCII.GetBytes(message);
+            byte[] byteData = Encoding.Default.GetBytes(message);
             Send(uid, cmdID, queueId++, byteData);
         }
 
@@ -170,7 +170,7 @@ namespace Network
 
         private void ReceiveComplete(int uid, int cmdID, int queueId, byte[] byteData)
         {
-            string content = Encoding.ASCII.GetString(byteData);
+            string content = Encoding.Default.GetString(byteData);
             if (null != NetworkController.receiveMessage)
             {
                 NetworkController.receiveMessage(uid, cmdID, queueId, content);
