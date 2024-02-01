@@ -276,6 +276,10 @@ namespace Network
         {
             string content = Encoding.Default.GetString(byteData);
             Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   queueId:" + queueId + "   content : " + content);
+            if (null != NetworkController.receiveMessage)
+            {
+                NetworkController.receiveMessage(uid, cmdID, queueId, content);
+            }
         }
 
     }

@@ -160,6 +160,7 @@
             this.LocalIPText.Size = new System.Drawing.Size(133, 21);
             this.LocalIPText.TabIndex = 10;
             this.LocalIPText.Text = "10.0.30.139";
+            this.LocalIPText.TextChanged += new System.EventHandler(this.LocalIPText_TextChanged);
             // 
             // Label5
             // 

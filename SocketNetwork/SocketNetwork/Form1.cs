@@ -151,5 +151,10 @@ namespace Network
             this.demoThread.Start();
         }
         #endregion
+
+        private void LocalIPText_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
