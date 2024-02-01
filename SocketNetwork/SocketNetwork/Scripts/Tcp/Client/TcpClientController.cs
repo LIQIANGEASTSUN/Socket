@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Network
@@ -21,10 +20,6 @@ namespace Network
         public void Start()
         {
             _tcpClient.StartConnect(_networkData.remoteIp, _networkData.remotePort);
-            //while (true)
-            //{
-            //    Input();
-            //}
         }
 
         public void Send(string msg)

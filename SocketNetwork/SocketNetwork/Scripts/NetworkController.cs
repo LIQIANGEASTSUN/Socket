@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Network
 {
@@ -68,7 +65,6 @@ namespace Network
         {
             string str = string.Format("uid:{0}_cmdID_{1}_queueId{2}_msg_{3}", uid, cmdID, queueId, msg);
             _receiveQueue.Enqueue(str);
-            //ReceiveBox.Text = string.Format("msg_{0}", msg);
         }
 
         public Queue<string> ReceiveQueue
