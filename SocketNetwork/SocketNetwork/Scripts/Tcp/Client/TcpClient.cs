@@ -19,7 +19,7 @@ namespace Network
         private TcpReceive _tcpReceive;
         private NetWorkState _netWorkState;
         private int _reConnectCount;
-        private const int Max_ReConnect_Count = 3;
+        private const int Max_ReConnect_Count = 3;  // 重连次数
 
         public TcpClient()
         {
