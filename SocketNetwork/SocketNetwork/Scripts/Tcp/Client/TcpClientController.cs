@@ -20,6 +20,7 @@ namespace Network
         public void Start()
         {
             _tcpClient.StartConnect(_networkData.remoteIp, _networkData.remotePort);
+            _tcpClient.SetReceiveCallBack(ReceiveComplete);
         }
 
         public void Send(string msg)
@@ -28,21 +29,14 @@ namespace Network
             _tcpClient.Send(_networkData.uid, _networkData.cmdID, _networkData.queueId++, byteData);
         }
 
-        private void Input()
+        private void ReceiveComplete(int uid, int cmdID, int queueId, byte[] byteData)
         {
-            Console.WriteLine("请输入UID");
-            string uid = Console.ReadLine();
-        
-            Console.WriteLine("请输入cmdID");
-            string cmdID = Console.ReadLine();
-
-            Console.WriteLine("请输入消息内容");
-            string msg = Console.ReadLine();
-
-            byte[] byteData = Encoding.Default.GetBytes(msg);
-
-            _tcpClient.Send(int.Parse(uid), int.Parse(cmdID), _networkData.queueId++, byteData);
+            string content = Encoding.Default.GetString(byteData);
+            Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   queueId:" + queueId + "   content : " + content);
+            if (null != NetworkController.receiveMessage)
+            {
+                NetworkController.receiveMessage(uid, cmdID, queueId, content);
+            }
         }
     }
-
 }

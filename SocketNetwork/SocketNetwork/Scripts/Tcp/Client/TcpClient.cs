@@ -24,7 +24,11 @@ namespace Network
         public TcpClient()
         {
             _tcpReceive = new TcpReceive();
-            _tcpReceive.SetCompleteCallBack(ReceiveComplete);
+        }
+
+        public void SetReceiveCallBack(Action<int, int, int, byte[]> callBack)
+        {
+            _tcpReceive.SetCompleteCallBack(callBack);
         }
 
         public void StartConnect(string ip, int port)
@@ -271,16 +275,5 @@ namespace Network
         {
 
         }
-
-        private void ReceiveComplete(int uid, int cmdID, int queueId, byte[] byteData)
-        {
-            string content = Encoding.Default.GetString(byteData);
-            Debug.Log("uid : " + uid + "    cmdID : " + cmdID + "   queueId:" + queueId + "   content : " + content);
-            if (null != NetworkController.receiveMessage)
-            {
-                NetworkController.receiveMessage(uid, cmdID, queueId, content);
-            }
-        }
-
     }
 }

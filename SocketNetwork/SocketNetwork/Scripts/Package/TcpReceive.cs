@@ -13,19 +13,19 @@ namespace Network
             Init();
         }
 
-        public void Clear()
-        {
-            Init();
-        }
-
         private void Init()
         {
             byteBuffer = new byte[StateObject.bufferSize * 2];
         }
 
-        public void SetCompleteCallBack(Action<int, int, int, byte[]> callBacka)
+        public void Clear()
         {
-            _callBack = callBacka;
+            _byteCount = 0;
+        }
+
+        public void SetCompleteCallBack(Action<int, int, int, byte[]> callBack)
+        {
+            _callBack = callBack;
         }
 
         public void ReceiveMessage(int count, byte[] bytesData)
