@@ -52,7 +52,7 @@ namespace Network
     {
         private List<ReceiveData> receiveList = new List<ReceiveData>();
 
-        public void Receive(int messageNumber, int packageCount, int pcakageIndex, int bytesLength, int uid, int cmdID, byte[] dataBytes)
+        public void Receive(int uid, int cmdID, int ququeId, int packageCount, int pcakageIndex, byte[] dataBytes)
         {
             if (receiveList.Count <= 0)
             {
