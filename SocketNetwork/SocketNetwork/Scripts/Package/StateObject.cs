@@ -30,6 +30,8 @@ namespace Network
 
         public const int TCP_HEAD_BIT = 16;  // SIZE_BIT + UID_BIT + CMDID_BIT + QUEUEID_BIT
 
-        public const int UDP_HEAD_BIT = 20;
+        public const int PACKAGE_COUNT_BIT = 4;
+        public const int PACKAGE_INDEX_BIT = 4;
+        public const int UDP_HEAD_BIT = 24;  // SIZE_BIT + UID_BIT + CMDID_BIT + QUEUEID_BIT + PACKAGE_COUNT_BIT + PACKAGE_INDEX_BIT 
     }
 }

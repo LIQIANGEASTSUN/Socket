@@ -58,6 +58,7 @@
     <Compile Include="Scripts\INetwork\INetwork.cs" />
     <Compile Include="Scripts\NetworkController.cs" />
     <Compile Include="Scripts\NetworkData.cs" />
+    <Compile Include="Scripts\Package\ByteTool.cs" />
     <Compile Include="Scripts\Package\TcpReceive.cs" />
     <Compile Include="Scripts\Package\SendData.cs" />
     <Compile Include="Scripts\Package\StateObject.cs" />

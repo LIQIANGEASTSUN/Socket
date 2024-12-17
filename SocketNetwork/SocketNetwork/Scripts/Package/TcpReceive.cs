@@ -33,24 +33,31 @@ namespace Network
             Array.Copy(bytesData, 0, byteBuffer, _byteCount, count);
             _byteCount += count;
 
-            Analyse();
+            while (true)
+            {
+                bool result = Analyse();
+                if (!result)
+                {
+                    break;
+                }
+            }
         }
 
-        private void Analyse()
+        private bool Analyse()
         {
             int index = 0;
-            byte[] sizeByte = CopyByte(index, NetworkConstant.SIZE_BIT, ref index);
+            byte[] sizeByte = ByteTool.ReadBytes(byteBuffer, index, NetworkConstant.SIZE_BIT, ref index);
             int size = IPAddressTool.NetworkToHostOrderInt32(sizeByte);
 
             if (_byteCount < size)
             {
-                return;
+                return false;
             }
 
-            byte[] uidByte = CopyByte(index, NetworkConstant.UID_BIT, ref index);
-            byte[] cmdIdByte = CopyByte(index, NetworkConstant.CMDID_BIT, ref index);
-            byte[] queueIdByte = CopyByte(index, NetworkConstant.QUEUEID_BIT, ref index);
-            byte[] msgBytes = CopyByte(index, size - NetworkConstant.TCP_HEAD_BIT, ref index);
+            byte[] uidByte = ByteTool.ReadBytes(byteBuffer, index, NetworkConstant.UID_BIT, ref index);
+            byte[] cmdIdByte = ByteTool.ReadBytes(byteBuffer, index, NetworkConstant.CMDID_BIT, ref index);
+            byte[] queueIdByte = ByteTool.ReadBytes(byteBuffer, index, NetworkConstant.QUEUEID_BIT, ref index);
+            byte[] msgBytes = ByteTool.ReadBytes(byteBuffer, index, size - NetworkConstant.TCP_HEAD_BIT, ref index);
             CompleteBuff(uidByte, cmdIdByte, queueIdByte, msgBytes);
 
             _byteCount -= size;
@@ -59,14 +66,7 @@ namespace Network
                 // 将剩余的字节往前挪到字节数组0位置开始
                 Array.Copy(byteBuffer, index, byteBuffer, 0, _byteCount);
             }
-        }
-
-        private byte[] CopyByte(int index, int count, ref int newIndex)
-        {
-            byte[] bytes = new byte[count];
-            Array.Copy(byteBuffer, index, bytes, 0, count);
-            newIndex = index + count;
-            return bytes;
+            return true;
         }
 
         private void CompleteBuff(byte[] uidByte, byte[] cmdIdByte, byte[] queueIdByte, byte[] msgBytes)

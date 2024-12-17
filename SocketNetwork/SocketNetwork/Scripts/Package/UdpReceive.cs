@@ -5,7 +5,6 @@ namespace Network
 {
     public class UdpReceive
     {
-        private const int intLength = 4;
         private Action<int, int, int, byte[]> _callBack;
         public UdpReceive()
         {
@@ -18,32 +17,35 @@ namespace Network
 
         public void ReceiveMessage(byte[] bytesData)
         {
-            int queueId = BitConverter.ToInt32(bytesData, 0);
-            queueId = IPAddressTool.NetworkToHostOrderInt32(queueId);
+            // SIZE_BIT + UID_BIT + CMDID_BIT + QUEUEID_BIT + PACKAGE_COUNT_BIT + PACKAGE_INDEX_BIT
+            int index = 0;
+            byte[] sizeByte = ByteTool.ReadBytes(bytesData, index, NetworkConstant.SIZE_BIT, ref index);
+            int size = IPAddressTool.NetworkToHostOrderInt32(sizeByte);
 
-            int packageCount = BitConverter.ToInt32(bytesData, intLength);
-            packageCount = IPAddressTool.NetworkToHostOrderInt32(packageCount);
+            byte[] uidByte = ByteTool.ReadBytes(bytesData, index, NetworkConstant.UID_BIT, ref index);
+            byte[] cmdIdByte = ByteTool.ReadBytes(bytesData, index, NetworkConstant.CMDID_BIT, ref index);
+            byte[] queueIdByte = ByteTool.ReadBytes(bytesData, index, NetworkConstant.QUEUEID_BIT, ref index);
+            byte[] packageCountByte = ByteTool.ReadBytes(bytesData, index, NetworkConstant.PACKAGE_COUNT_BIT, ref index);
+            byte[] packageIndexByte = ByteTool.ReadBytes(bytesData, index, NetworkConstant.PACKAGE_INDEX_BIT, ref index);
 
-            int pcakageIndex = BitConverter.ToInt32(bytesData, intLength * 2);
-            pcakageIndex = IPAddressTool.NetworkToHostOrderInt32(pcakageIndex);
-
-            int bytesLength = BitConverter.ToInt32(bytesData, intLength * 3);
-            bytesLength = IPAddressTool.NetworkToHostOrderInt32(bytesLength);
-
-            int uid = BitConverter.ToInt32(bytesData, intLength * 4);
-            uid = IPAddressTool.NetworkToHostOrderInt32(uid);
-
-            int cmdID = BitConverter.ToInt32(bytesData, intLength * 5);
-            cmdID = IPAddressTool.NetworkToHostOrderInt32(cmdID);
-
-            byte[] dataBytes = new byte[bytesLength];
-            Array.Copy(bytesData, intLength * 6, dataBytes, 0, bytesLength);
+            byte[] msgBytes = ByteTool.ReadBytes(bytesData, index, size - NetworkConstant.UDP_HEAD_BIT, ref index);
+            CompleteBuff(uidByte, cmdIdByte, queueIdByte, packageCountByte, packageIndexByte, msgBytes);
         }
 
-        private void CompleteBuff(byte[] bytes)
+        private void CompleteBuff(byte[] uidByte, byte[] cmdIdByte, byte[] queueIdByte, byte[] packageCountByte, byte[] packageIndexByte, byte[] msgBytes)
         {
+            int uid = IPAddressTool.NetworkToHostOrderInt32(uidByte);
+            int cmdId = IPAddressTool.NetworkToHostOrderInt32(cmdIdByte);
+            int queueId = IPAddressTool.NetworkToHostOrderInt32(queueIdByte);
+            int packageCount = IPAddressTool.NetworkToHostOrderInt32(packageCountByte);
+            int pcakageIndex = IPAddressTool.NetworkToHostOrderInt32(packageIndexByte);
 
+            if (null != _callBack)
+            {
+                _callBack(uid, cmdId, queueId, msgBytes);
+            }
         }
+
     }
 
     public class UdpReceiveDataController
@@ -58,37 +60,11 @@ namespace Network
             }
         }
 
-        private int InsertIndex(List<ReceiveData> list, int value)
-        {
-            int left = 0;
-            int right = list.Count - 1;
-            int index = 0;
-            while (left <= right)
-            {
-                int mid = (left + right) / 2;
-                if (list[mid]._messageNumber > value)
-                {
-                    right = mid - 1;
-                }
-                else if (list[mid]._messageNumber == value)
-                {
-                    index = mid;
-                    break;
-                }
-                else
-                {
-                    left = mid + 1;
-                }
-            }
-
-            return index;
-        }
-
     }
 
     public class ReceiveData
     {
-        public int _messageNumber;
+        public int _queueId;
         public int _uid;
         public int _cmdId;
         public int _packageCount;
@@ -96,7 +72,7 @@ namespace Network
 
         public ReceiveData(int messageNumber, int uid, int cmdId, int packageCount)
         {
-            _messageNumber = messageNumber;
+            _queueId = messageNumber;
             _uid = uid;
             _cmdId = cmdId;
         }

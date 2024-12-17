@@ -70,8 +70,8 @@ namespace Network
         /// <param name="bytes"></param>
         public void Send(int uid, int cmdID, string ip, int port, byte[] bytes)
         {
-            //SendData.ToUdpByte(uid, cmdID, ip, port, bytes, SendByte);
-            SendByte(ip, port, bytes);
+            byte[] byteData = SendData.ToUdpByte(uid, cmdID, _networkData.queueId++, bytes);
+            SendByte(ip, port, byteData);
         }
 
         private void SendByte(string ip, int port, byte[] bytes)

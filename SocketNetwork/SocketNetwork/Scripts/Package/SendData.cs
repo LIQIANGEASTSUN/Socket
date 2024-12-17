@@ -75,6 +75,7 @@ namespace Network
         /// <returns></returns>
         public static byte[] ToTcpByte(int uid, int cmdId, int queueId, byte[] bytesData)
         {
+            // // SIZE_BIT + UID_BIT + CMDID_BIT + QUEUEID_BIT + sendBytes
             byte[] uidBytes = IPAddressTool.HostToNetworkOrderByte(uid);
             byte[] cmdIdBytes = IPAddressTool.HostToNetworkOrderByte(cmdId);
             byte[] queueIdBytes = IPAddressTool.HostToNetworkOrderByte(queueId);
@@ -84,11 +85,11 @@ namespace Network
 
             byte[] sendBytes = new byte[size];
             long index = 0;
-            Copy(sizeBytes, sendBytes, NetworkConstant.SIZE_BIT, ref index);
-            Copy(uidBytes, sendBytes, NetworkConstant.UID_BIT, ref index);
-            Copy(cmdIdBytes, sendBytes, NetworkConstant.CMDID_BIT, ref index);
-            Copy(queueIdBytes, sendBytes, NetworkConstant.QUEUEID_BIT, ref index);
-            Copy(bytesData, sendBytes, bytesData.Length, ref index);
+            ByteTool.CopyBytes(sizeBytes, sendBytes, NetworkConstant.SIZE_BIT, ref index);
+            ByteTool.CopyBytes(uidBytes, sendBytes, NetworkConstant.UID_BIT, ref index);
+            ByteTool.CopyBytes(cmdIdBytes, sendBytes, NetworkConstant.CMDID_BIT, ref index);
+            ByteTool.CopyBytes(queueIdBytes, sendBytes, NetworkConstant.QUEUEID_BIT, ref index);
+            ByteTool.CopyBytes(bytesData, sendBytes, bytesData.Length, ref index);
 
             return sendBytes;
         }
@@ -97,40 +98,30 @@ namespace Network
         #region UDP
         public static byte[] ToUdpByte(int uid, int cmdId, int queueId, byte[] bytesData)
         {
-            int packageCount = 1; // 目前一个消息一个包，不用分包
-
-            int pcakageIndex = 0; // 只有一个包，所以index = 0
-
-            byte[] packageCountBytes = IPAddressTool.HostToNetworkOrderByte(uid);
-            byte[] pcakageIndexBytes = IPAddressTool.HostToNetworkOrderByte(uid);
-
+            // SIZE_BIT + UID_BIT + CMDID_BIT + QUEUEID_BIT + PACKAGE_COUNT_BIT + PACKAGE_INDEX_BIT
             byte[] uidBytes = IPAddressTool.HostToNetworkOrderByte(uid);
             byte[] cmdIdBytes = IPAddressTool.HostToNetworkOrderByte(cmdId);
             byte[] queueIdBytes = IPAddressTool.HostToNetworkOrderByte(queueId);
+            int packageCount = 1; // 目前一个消息一个包，不用分包
+            int pcakageIndex = 0; // 只有一个包，所以index = 0
+
+            byte[] packageCountBytes = IPAddressTool.HostToNetworkOrderByte(packageCount);
+            byte[] pcakageIndexBytes = IPAddressTool.HostToNetworkOrderByte(pcakageIndex);
 
             int size = NetworkConstant.UDP_HEAD_BIT + bytesData.Length;
             byte[] sizeBytes = IPAddressTool.HostToNetworkOrderByte(size);
 
             byte[] sendBytes = new byte[size];
             long index = 0;
-            Copy(sizeBytes, sendBytes, NetworkConstant.SIZE_BIT, ref index);
-
-            Copy(packageCountBytes, sendBytes, NetworkConstant.UID_BIT, ref index);
-            Copy(pcakageIndexBytes, sendBytes, NetworkConstant.UID_BIT, ref index);
-
-
-            Copy(uidBytes, sendBytes, NetworkConstant.UID_BIT, ref index);
-            Copy(cmdIdBytes, sendBytes, NetworkConstant.CMDID_BIT, ref index);
-            Copy(queueIdBytes, sendBytes, NetworkConstant.QUEUEID_BIT, ref index);
-            Copy(bytesData, sendBytes, bytesData.Length, ref index);
+            ByteTool.CopyBytes(sizeBytes, sendBytes, NetworkConstant.SIZE_BIT, ref index);
+            ByteTool.CopyBytes(uidBytes, sendBytes, NetworkConstant.UID_BIT, ref index);
+            ByteTool.CopyBytes(cmdIdBytes, sendBytes, NetworkConstant.CMDID_BIT, ref index);
+            ByteTool.CopyBytes(queueIdBytes, sendBytes, NetworkConstant.QUEUEID_BIT, ref index);
+            ByteTool.CopyBytes(packageCountBytes, sendBytes, NetworkConstant.PACKAGE_COUNT_BIT, ref index);
+            ByteTool.CopyBytes(pcakageIndexBytes, sendBytes, NetworkConstant.PACKAGE_INDEX_BIT, ref index);
+            ByteTool.CopyBytes(bytesData, sendBytes, bytesData.Length, ref index);
             return sendBytes;
         }
         #endregion
-
-        private static void Copy(Array sourceArray, Array destinationArray, long length, ref long destinationIndex)
-        {
-            Array.Copy(sourceArray, 0, destinationArray, destinationIndex, length);
-            destinationIndex += length;
-        }
     }
 }
