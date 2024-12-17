@@ -18,7 +18,7 @@ namespace Network
 
         public void Start()
         {
-            _udpClient.StartBind(_networkData.localIp, _networkData.localPort);
+            _udpClient.StartBind(_networkData);
         }
 
         public void Send(string msg)

@@ -9,6 +9,7 @@ namespace Network
     {
         private Socket _socket;
         private UdpReceive _udpReceive;
+        private NetworkData _networkData;
 
         public UdpClient()
         {
@@ -16,10 +17,19 @@ namespace Network
             _udpReceive.SetCompleteCallBack(ReceiveComplete);
         }
 
-        public void StartBind(string ip, int port)
+        private NetworkData NetworkData
         {
-            IPAddress ipAddress = IPAddress.Parse(ip);
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, port);
+            get
+            {
+                return _networkData;
+            }
+        }
+
+        public void StartBind(NetworkData networkData)
+        {
+            _networkData = networkData;
+            IPAddress ipAddress = IPAddress.Parse(NetworkData.localIp);
+            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, NetworkData.localPort);
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _socket.Bind(ipEndPoint);
 
@@ -28,7 +38,7 @@ namespace Network
 
         private void BeginReceive()
         {
-            StateUdpObject state = new StateUdpObject();
+            StateUdpObject state = new StateUdpObject(NetworkData.remoteIp, NetworkData.remotePort);
             state.workSocket = _socket;
             _socket.BeginReceiveFrom(state.buffer, 0, StateObject.bufferSize, SocketFlags.None, ref state.remote, ReceiveCallBack, state);
         }
@@ -67,7 +77,7 @@ namespace Network
         {
             try
             {
-                StateUdpObject stateObject = new StateUdpObject();
+                StateUdpObject stateObject = new StateUdpObject(NetworkData.remoteIp, NetworkData.remotePort);
                 stateObject.workSocket = _socket;
 
                 IPAddress ipAddress = IPAddress.Parse(ip);

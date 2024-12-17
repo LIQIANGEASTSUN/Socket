@@ -12,7 +12,13 @@ namespace Network
 
     public class StateUdpObject : StateObject
     {
-        public EndPoint remote = new IPEndPoint(IPAddress.Any, 0);
+        public EndPoint remote;
+        public StateUdpObject(string ip, int port)
+        {
+            IPAddress ipAddress = IPAddress.Parse(ip);
+            remote = new IPEndPoint(ipAddress, port);
+        }
+        //public EndPoint remote = new IPEndPoint(IPAddress.Any, 0);
     }
 
     public class NetworkConstant
