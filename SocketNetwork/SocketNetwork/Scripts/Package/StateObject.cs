@@ -28,6 +28,8 @@ namespace Network
         public const int CMDID_BIT = 4;
         public const int QUEUEID_BIT = 4;
 
-        public const int HEAD_BIT = 16;  // SIZE_BIT + UID_BIT + CMDID_BIT + QUEUEID_BIT
+        public const int TCP_HEAD_BIT = 16;  // SIZE_BIT + UID_BIT + CMDID_BIT + QUEUEID_BIT
+
+        public const int UDP_HEAD_BIT = 20;
     }
 }

@@ -50,7 +50,7 @@ namespace Network
             byte[] uidByte = CopyByte(index, NetworkConstant.UID_BIT, ref index);
             byte[] cmdIdByte = CopyByte(index, NetworkConstant.CMDID_BIT, ref index);
             byte[] queueIdByte = CopyByte(index, NetworkConstant.QUEUEID_BIT, ref index);
-            byte[] msgBytes = CopyByte(index, size - NetworkConstant.HEAD_BIT, ref index);
+            byte[] msgBytes = CopyByte(index, size - NetworkConstant.TCP_HEAD_BIT, ref index);
             CompleteBuff(uidByte, cmdIdByte, queueIdByte, msgBytes);
 
             _byteCount -= size;

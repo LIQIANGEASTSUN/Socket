@@ -18,8 +18,8 @@ namespace Network
 
         public void ReceiveMessage(byte[] bytesData)
         {
-            int messageNumber = BitConverter.ToInt32(bytesData, 0);
-            messageNumber = IPAddressTool.NetworkToHostOrderInt32(messageNumber);
+            int queueId = BitConverter.ToInt32(bytesData, 0);
+            queueId = IPAddressTool.NetworkToHostOrderInt32(queueId);
 
             int packageCount = BitConverter.ToInt32(bytesData, intLength);
             packageCount = IPAddressTool.NetworkToHostOrderInt32(packageCount);
