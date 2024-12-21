@@ -38,5 +38,14 @@ namespace Network
                 NetworkController.receiveMessage(uid, cmdID, queueId, content);
             }
         }
+
+        public void Dispose()
+        {
+            if (null == _tcpClient)
+            {
+                return;
+            }
+            _tcpClient.Dispose();
+        }
     }
 }

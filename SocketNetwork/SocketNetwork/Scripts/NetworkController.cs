@@ -74,5 +74,11 @@ namespace Network
                 return _receiveQueue;
             }
         }
+
+        public void Dispose()
+        {
+
+        }
+
     }
 }

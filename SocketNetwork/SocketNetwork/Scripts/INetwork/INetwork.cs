@@ -7,7 +7,10 @@
         void Start();
 
         void Send(string msg);
-    }
+
+		void Dispose();
+
+	}
 
 	public enum NetWorkState
 	{
